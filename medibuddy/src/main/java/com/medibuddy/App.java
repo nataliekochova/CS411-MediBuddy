@@ -12,7 +12,7 @@ public class App {
         OpenFdaClient client = new OpenFdaClient();
 
         try {
-            OpenFdaResponse response = client.searchDrugLabel("ibuprofen");
+            OpenFdaResponse response = client.searchDrugLabel("acetaminophen");
 
             if (response.getResults() == null || response.getResults().isEmpty()) {
                 System.out.println("No results found.");
