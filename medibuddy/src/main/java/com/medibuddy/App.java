@@ -26,90 +26,118 @@ public class App extends Application {
 
     private final OpenFdaClient client = new OpenFdaClient();
 
+    private VBox createInfoCard(DrugLabelResult result) {
+        VBox card = createCard("Basic Information");
+
+        card.getChildren().add(createField("Brand", getOpenFdaValue(result.getOpenfda(), "brand_name")));
+        card.getChildren().add(createField("Generic", getOpenFdaValue(result.getOpenfda(), "generic_name")));
+        card.getChildren().add(createField("Manufacturer", getOpenFdaValue(result.getOpenfda(), "manufacturer_name")));
+
+        return card;
+    }
+
+    private VBox createTextCard(String title, String content) {
+        VBox card = createCard(title);
+
+        Label body = new Label(content == null || content.isBlank() ? "N/A" : content);
+        body.setWrapText(true);
+        body.getStyleClass().add("card-body");
+
+        card.getChildren().add(body);
+        return card;
+    }
+
+    private VBox createCard(String titleText) {
+        Label title = new Label(titleText);
+        title.getStyleClass().add("card-title");
+
+        VBox card = new VBox(8, title);
+        card.getStyleClass().add("info-card");
+
+        return card;
+    }
+
+    private VBox createField(String labelText, String valueText) {
+        Label label = new Label(labelText);
+        label.getStyleClass().add("field-label");
+
+        Label value = new Label((valueText == null || valueText.isBlank()) ? "N/A" : valueText);
+        value.setWrapText(true);
+        value.getStyleClass().add("field-value");
+
+        VBox fieldBox = new VBox(2, label, value);
+        return fieldBox;
+    }
+
+    private String getOpenFdaValue(Map<String, List<String>> openfda, String key) {
+        if (openfda != null && openfda.containsKey(key) && !openfda.get(key).isEmpty()) {
+            return openfda.get(key).get(0);
+        }
+        return "N/A";
+    }
+
+    private String getFirstText(List<String> values) {
+        if (values == null || values.isEmpty() || values.get(0) == null || values.get(0).isBlank()) {
+            return "N/A";
+        }
+        return values.get(0);
+    }
+
+    private void showDrugResult(VBox resultsContainer, DrugLabelResult result) {
+        resultsContainer.getChildren().clear();
+
+        resultsContainer.getChildren().add(createInfoCard(result));
+        resultsContainer.getChildren().add(createTextCard("Purpose", getFirstText(result.getPurpose())));
+        resultsContainer.getChildren().add(createTextCard("Indications", getFirstText(result.getIndications_and_usage())));
+        resultsContainer.getChildren().add(createTextCard("Warnings", getFirstText(result.getWarnings())));
+        resultsContainer.getChildren().add(createTextCard("Dosage", getFirstText(result.getDosage_and_administration())));
+    }
+
     @Override
     public void start(Stage stage) {
         Label title = new Label("MediBuddy");
-        title.setStyle("""
-                -fx-font-size: 24px;
-                -fx-font-weight: bold;
-                -fx-text-fill: #1f2937;
-                """);
+        title.getStyleClass().add("title");
 
         Label subtitle = new Label("Search for medication label information");
-        subtitle.setStyle("""
-                -fx-font-size: 13px;
-                -fx-text-fill: #6b7280;
-                """);
+        subtitle.getStyleClass().add("subtitle");
 
         TextField input = new TextField();
         input.setPromptText("Enter a medication name");
         input.setMaxWidth(Double.MAX_VALUE);
-        input.setStyle("""
-                -fx-font-size: 14px;
-                -fx-background-radius: 10px;
-                -fx-border-radius: 10px;
-                -fx-padding: 10px;
-                -fx-border-color: #d1d5db;
-                -fx-background-color: white;
-                """);
+        input.getStyleClass().add("text-field");
 
         Button searchButton = new Button("Search");
         searchButton.setMaxWidth(Double.MAX_VALUE);
-        searchButton.setStyle("""
-                -fx-background-color: #2563eb;
-                -fx-text-fill: white;
-                -fx-font-size: 14px;
-                -fx-font-weight: bold;
-                -fx-background-radius: 10px;
-                -fx-padding: 10px 14px 10px 14px;
-                """);
+        searchButton.getStyleClass().add("button");
 
         Label resultsTitle = new Label("Results");
-        resultsTitle.setStyle("""
-                -fx-font-size: 16px;
-                -fx-font-weight: bold;
-                -fx-text-fill: #1f2937;
-                """);
+        resultsTitle.getStyleClass().add("section-title");
 
-        Label results = new Label("Search for a medication to see details.");
-        results.setWrapText(true);
-        results.setMaxWidth(Double.MAX_VALUE);
-        results.setStyle("""
-                -fx-font-size: 13px;
-                -fx-text-fill: #111827;
-                """);
+        VBox resultsContainer = new VBox(12);
+        resultsContainer.getStyleClass().add("results-container");
 
-        ScrollPane resultsScroll = new ScrollPane(results);
+        Label placeholder = new Label("Search for a medication to see details.");
+        placeholder.getStyleClass().add("results-text");
+        placeholder.setWrapText(true);
+
+        resultsContainer.getChildren().add(placeholder);
+
+        ScrollPane resultsScroll = new ScrollPane(resultsContainer);
         resultsScroll.setFitToWidth(true);
-        resultsScroll.setStyle("""
-                -fx-background: white;
-                -fx-background-color: white;
-                -fx-border-color: #d1d5db;
-                -fx-border-radius: 10px;
-                -fx-background-radius: 10px;
-                """);
+        resultsScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        resultsScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         resultsScroll.setPrefHeight(360);
-        results.setStyle("""
-                -fx-font-size: 13px;
-                -fx-background-radius: 10px;
-                -fx-border-radius: 10px;
-                -fx-border-color: #d1d5db;
-                -fx-control-inner-background: white;
-                """);
+        resultsScroll.getStyleClass().add("results-scroll");
+
 
         VBox resultsCard = new VBox(10, resultsTitle, resultsScroll);
         resultsCard.setPadding(new Insets(14));
-        resultsCard.setStyle("""
-                -fx-background-color: white;
-                -fx-background-radius: 16px;
-                -fx-border-radius: 16px;
-                -fx-border-color: #e5e7eb;
-                """);
-        VBox.setVgrow(results, Priority.ALWAYS);
+        resultsCard.getStyleClass().add("card");
+        VBox.setVgrow(resultsScroll, Priority.ALWAYS);
 
         VBox content = new VBox(12, title, subtitle, input, searchButton, resultsCard);
         content.setPadding(new Insets(18));
-        content.setStyle("-fx-background-color: #f3f4f6;");
+        content.getStyleClass().add("root");
 
         input.setOnAction(e -> searchButton.fire());
 
@@ -117,32 +145,60 @@ public class App extends Application {
             String medName = input.getText().trim();
 
             if (medName.isEmpty()) {
-                results.setText("Please enter a medication name.");
+                resultsContainer.getChildren().clear();
+
+                Label prompt = new Label("Please enter a medication name.");
+                prompt.getStyleClass().add("results-text");
+                prompt.setWrapText(true);
+
+                resultsContainer.getChildren().add(prompt);
                 return;
             }
 
-            results.setText("Searching...");
+            resultsContainer.getChildren().clear();
+
+            Label loading = new Label("Searching...");
+            loading.getStyleClass().add("results-text");
+            loading.setWrapText(true);
+
+            resultsContainer.getChildren().add(loading);
 
             new Thread(() -> {
                 try {
                     OpenFdaResponse response = client.searchDrugLabel(medName);
 
-                    String text;
-                    if (response.getResults() == null || response.getResults().isEmpty()) {
-                        text = "No results found.";
-                    } else {
-                        DrugLabelResult first = response.getResults().get(0);
-                        text = buildResultText(first);
-                    }
+                    Platform.runLater(() -> {
+                        resultsContainer.getChildren().clear();
 
-                    Platform.runLater(() -> results.setText(text));
+                        if (response.getResults() == null || response.getResults().isEmpty()) {
+                            Label none = new Label("No results found.");
+                            none.getStyleClass().add("results-text");
+                            none.setWrapText(true);
+                            resultsContainer.getChildren().add(none);
+                        } else {
+                            DrugLabelResult first = response.getResults().get(0);
+                            showDrugResult(resultsContainer, first);
+                        }
+                    });
+
                 } catch (Exception ex) {
-                    Platform.runLater(() -> results.setText("Error:\n" + ex.getMessage()));
+                    Platform.runLater(() -> {
+                        resultsContainer.getChildren().clear();
+
+                        Label error = new Label("Error:\n" + ex.getMessage());
+                        error.getStyleClass().add("results-text");
+                        error.setWrapText(true);
+                        resultsContainer.getChildren().add(error);
+                    });
                 }
             }).start();
         });
 
         Scene scene = new Scene(content, 380, 620);
+
+        scene.getStylesheets().add(
+            getClass().getResource("/style.css").toExternalForm()
+        );
 
         stage.setTitle("MediBuddy");
         stage.setMinWidth(360);

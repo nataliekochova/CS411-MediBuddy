@@ -1,0 +1,44 @@
+package com.medibuddy.model;
+
+public class SavedMedication {
+    private final String brandName;
+    private final String genericName;
+    private final String manufacturer;
+    private final String purpose;
+    private final String indications;
+    private final String warnings;
+    private final String dosage;
+
+    public SavedMedication(
+            String brandName,
+            String genericName,
+            String manufacturer,
+            String purpose,
+            String indications,
+            String warnings,
+            String dosage
+    ) {
+        this.brandName = brandName;
+        this.genericName = genericName;
+        this.manufacturer = manufacturer;
+        this.purpose = purpose;
+        this.indications = indications;
+        this.warnings = warnings;
+        this.dosage = dosage;
+    }
+
+    public String getBrandName() { return brandName; }
+    public String getGenericName() { return genericName; }
+    public String getManufacturer() { return manufacturer; }
+    public String getPurpose() { return purpose; }
+    public String getIndications() { return indications; }
+    public String getWarnings() { return warnings; }
+    public String getDosage() { return dosage; }
+
+    public String getDisplayName() {
+        if (brandName != null && !brandName.isBlank() && !brandName.equals("N/A")) {
+            return brandName;
+        }
+        return genericName;
+    }
+}

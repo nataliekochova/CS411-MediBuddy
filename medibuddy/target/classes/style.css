@@ -1,0 +1,107 @@
+/* Root background */
+.root {
+    -fx-background-color: #f3f4f6;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* Title */
+.title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2937;
+}
+
+/* Subtitle */
+.subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6b7280;
+}
+
+/* Input field */
+.text-field {
+    -fx-font-size: 14px;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-padding: 10px;
+    -fx-border-color: #d1d5db;
+    -fx-background-color: white;
+}
+
+/* Button */
+.button {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-padding: 10px 14px;
+}
+
+.button:hover {
+    -fx-background-color: #1d4ed8;
+}
+
+/* Card container */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-color: #e5e7eb;
+    -fx-padding: 14px;
+}
+
+/* Section title */
+.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2937;
+}
+
+/* Results text */
+.results-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #111827;
+}
+
+/* Scrollable results container */
+.results-scroll {
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+}
+
+.results-container {
+    -fx-padding: 4px;
+    -fx-spacing: 12px;
+}
+
+.info-card {
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 14px;
+    -fx-background-radius: 14px;
+    -fx-padding: 14px;
+}
+
+.card-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2937;
+}
+
+.card-body {
+    -fx-font-size: 13px;
+    -fx-text-fill: #111827;
+}
+
+.field-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6b7280;
+}
+
+.field-value {
+    -fx-font-size: 13px;
+    -fx-text-fill: #111827;
+}
