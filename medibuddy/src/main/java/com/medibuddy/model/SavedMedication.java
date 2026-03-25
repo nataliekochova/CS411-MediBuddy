@@ -27,18 +27,41 @@ public class SavedMedication {
         this.dosage = dosage;
     }
 
-    public String getBrandName() { return brandName; }
-    public String getGenericName() { return genericName; }
-    public String getManufacturer() { return manufacturer; }
-    public String getPurpose() { return purpose; }
-    public String getIndications() { return indications; }
-    public String getWarnings() { return warnings; }
-    public String getDosage() { return dosage; }
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public String getGenericName() {
+        return genericName;
+    }
+
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public String getIndications() {
+        return indications;
+    }
+
+    public String getWarnings() {
+        return warnings;
+    }
+
+    public String getDosage() {
+        return dosage;
+    }
 
     public String getDisplayName() {
-        if (brandName != null && !brandName.isBlank() && !brandName.equals("N/A")) {
+        if (brandName != null && !brandName.isBlank() && !"N/A".equals(brandName)) {
             return brandName;
         }
-        return genericName;
+        if (genericName != null && !genericName.isBlank()) {
+            return genericName;
+        }
+        return "Unknown Medication";
     }
 }

@@ -105,3 +105,19 @@
     -fx-font-size: 13px;
     -fx-text-fill: #111827;
 }
+
+.med-list-button {
+    -fx-background-color: white;
+    -fx-text-fill: #111827;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #e5e7eb;
+    -fx-padding: 12px;
+    -fx-alignment: center-left;
+}
+
+.med-list-button:hover {
+    -fx-background-color: #f9fafb;
+}

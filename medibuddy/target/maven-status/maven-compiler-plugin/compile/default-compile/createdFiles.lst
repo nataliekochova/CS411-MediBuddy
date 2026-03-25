@@ -1,7 +1,11 @@
-com/medibuddy/service/MedicationService.class
+com/medibuddy/ui/SearchPage.class
 com/medibuddy/App.class
 com/medibuddy/config/OpenFdaConfig.class
 com/medibuddy/model/OpenFdaMeta.class
+com/medibuddy/service/MedicationStore.class
+com/medibuddy/ui/MedicationDetailPage.class
 com/medibuddy/model/DrugLabelResult.class
 com/medibuddy/model/OpenFdaResponse.class
 com/medibuddy/client/OpenFdaClient.class
+com/medibuddy/ui/HomePage.class
+com/medibuddy/model/SavedMedication.class

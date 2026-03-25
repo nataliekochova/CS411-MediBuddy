@@ -1,7 +1,11 @@
-/mnt/c/Users/david/Desktop/CS411/CS411-MediBuddy/medibuddy/src/main/java/com/medibuddy/service/MedicationService.java
 /mnt/c/Users/david/Desktop/CS411/CS411-MediBuddy/medibuddy/src/main/java/com/medibuddy/config/OpenFdaConfig.java
+/mnt/c/Users/david/Desktop/CS411/CS411-MediBuddy/medibuddy/src/main/java/com/medibuddy/ui/HomePage.java
+/mnt/c/Users/david/Desktop/CS411/CS411-MediBuddy/medibuddy/src/main/java/com/medibuddy/ui/MedicationDetailPage.java
 /mnt/c/Users/david/Desktop/CS411/CS411-MediBuddy/medibuddy/src/main/java/com/medibuddy/App.java
+/mnt/c/Users/david/Desktop/CS411/CS411-MediBuddy/medibuddy/src/main/java/com/medibuddy/model/SavedMedication.java
+/mnt/c/Users/david/Desktop/CS411/CS411-MediBuddy/medibuddy/src/main/java/com/medibuddy/ui/SearchPage.java
 /mnt/c/Users/david/Desktop/CS411/CS411-MediBuddy/medibuddy/src/main/java/com/medibuddy/model/DrugLabelResult.java
 /mnt/c/Users/david/Desktop/CS411/CS411-MediBuddy/medibuddy/src/main/java/com/medibuddy/model/OpenFdaResponse.java
 /mnt/c/Users/david/Desktop/CS411/CS411-MediBuddy/medibuddy/src/main/java/com/medibuddy/model/OpenFdaMeta.java
+/mnt/c/Users/david/Desktop/CS411/CS411-MediBuddy/medibuddy/src/main/java/com/medibuddy/service/MedicationStore.java
 /mnt/c/Users/david/Desktop/CS411/CS411-MediBuddy/medibuddy/src/main/java/com/medibuddy/client/OpenFdaClient.java
