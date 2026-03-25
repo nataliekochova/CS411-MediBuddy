@@ -28,10 +28,30 @@
 
 
       <dependency>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-annotations</artifactId>
-          <version>3.0-rc5</version>
+          <groupId>com.fasterxml.jackson</groupId>
+          <artifactId>jackson-parent</artifactId>
+          <version>2.19.1</version>
+          <type>pom</type>
       </dependency>
+
+
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-controls</artifactId>
+        <version>21</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-fxml</artifactId>
+        <version>21</version>
+    </dependency>
+
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>3.0-rc5</version>
+    </dependency>
 
 
       <dependency>
@@ -89,6 +109,14 @@
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
+        </plugin>
+        <plugin>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-maven-plugin</artifactId>
+            <version>0.0.8</version>
+            <configuration>
+                <mainClass>com.medibuddy.App</mainClass>
+            </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
