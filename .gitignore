@@ -1,1 +1,19 @@
-medibuddy/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+# Compiled Java files
+*.class
+
+# Maven build outputs
+target/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Temporary files
+*.tmp
+*.swp
