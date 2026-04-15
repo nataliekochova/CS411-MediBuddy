@@ -12,12 +12,12 @@ import javafx.scene.layout.VBox;
 
 public class MedicationDetailPage {
 
-    private final App app;
+    private final AppShell shell;
     private final SavedMedication medication;
     private final VBox root;
 
-    public MedicationDetailPage(App app, SavedMedication medication) {
-        this.app = app;
+    public MedicationDetailPage(AppShell shell, SavedMedication medication) {
+        this.shell = shell;
         this.medication = medication;
         this.root = build();
     }
@@ -36,7 +36,7 @@ public class MedicationDetailPage {
         Button backButton = new Button("Back");
         backButton.setMaxWidth(Double.MAX_VALUE);
         backButton.getStyleClass().add("button");
-        backButton.setOnAction(e -> app.showHomePage());
+        backButton.setOnAction(e -> shell.showMedicationsPage());
 
         VBox detailsContainer = new VBox(12);
         detailsContainer.getStyleClass().add("results-container");

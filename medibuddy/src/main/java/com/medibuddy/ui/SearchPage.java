@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class SearchPage {
 
-    private final App app;
+    private final AppShell shell;
     private final OpenFdaClient client;
     private final MedicationStore store;
     private final VBox root;
@@ -31,8 +31,8 @@ public class SearchPage {
     private DrugLabelResult currentResult;
     private Button addButton;
 
-    public SearchPage(App app, OpenFdaClient client, MedicationStore store) {
-        this.app = app;
+    public SearchPage(AppShell shell, OpenFdaClient client, MedicationStore store) {
+        this.shell = shell;
         this.client = client;
         this.store = store;
         this.root = build();
@@ -52,7 +52,7 @@ public class SearchPage {
         Button backButton = new Button("Back");
         backButton.setMaxWidth(Double.MAX_VALUE);
         backButton.getStyleClass().add("button");
-        backButton.setOnAction(e -> app.showHomePage());
+        backButton.setOnAction(e -> shell.showMedicationsPage());
 
         TextField input = new TextField();
         input.setPromptText("Enter a medication name");
@@ -71,7 +71,7 @@ public class SearchPage {
         addButton.setOnAction(e -> {
             if (currentResult != null) {
                 store.addMedication(toSavedMedication(currentResult));
-                app.showHomePage();
+                shell.showMedicationsPage();
             }
         });
 

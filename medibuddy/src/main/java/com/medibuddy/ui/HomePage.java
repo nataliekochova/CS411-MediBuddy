@@ -12,12 +12,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class HomePage {
-    private final App app;
+    private final AppShell shell;
     private final MedicationStore store;
     private final VBox root;
 
-    public HomePage(App app, MedicationStore store) {
-        this.app = app;
+    public HomePage(AppShell shell, MedicationStore store) {
+        this.shell = shell;
         this.store = store;
         this.root = build();
     }
@@ -36,7 +36,7 @@ public class HomePage {
         Button searchButton = new Button("Search Medications");
         searchButton.getStyleClass().add("button");
         searchButton.setMaxWidth(Double.MAX_VALUE);
-        searchButton.setOnAction(e -> app.showSearchPage());
+        searchButton.setOnAction(e -> shell.showSearchPage());
 
         Label savedTitle = new Label("Saved Medications");
         savedTitle.getStyleClass().add("section-title");
@@ -55,7 +55,7 @@ public class HomePage {
                 medButton.getStyleClass().add("med-list-button");
                 medButton.setMaxWidth(Double.MAX_VALUE);
                 medButton.setWrapText(true);
-                medButton.setOnAction(e -> app.showMedicationDetailPage(med));
+                medButton.setOnAction(e -> shell.showMedicationDetailPage(med));
                 medList.getChildren().add(medButton);
             }
         }

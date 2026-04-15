@@ -121,3 +121,61 @@
 .med-list-button:hover {
     -fx-background-color: #f9fafb;
 }
+
+.app-shell {
+    -fx-background-color: #f3f4f6;
+}
+
+.app-content {
+    -fx-background-color: #f3f4f6;
+}
+
+.page-root {
+    -fx-background-color: #f3f4f6;
+}
+
+.bottom-nav {
+    -fx-background-color: #d1d5db;
+    -fx-background-radius: 20px 20px 0 0;
+    -fx-border-radius: 20px 20px 0 0;
+    -fx-padding: 10px 12px 12px 12px;
+}
+
+.nav-button {
+    -fx-background-color: #f3f4f6;
+    -fx-border-color: transparent;
+    -fx-padding: 10px;
+    -fx-background-radius: 18px;
+    -fx-border-radius: 18px;
+    -fx-alignment: center;
+}
+
+.nav-button:hover {
+    -fx-background-color: #e5e7eb;
+    -fx-border-color: transparent;
+}
+
+.nav-button:pressed {
+    -fx-background-color: #d1d5db;
+    -fx-border-color: transparent;
+}
+
+.nav-button:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.nav-active {
+    -fx-background-color: #2563eb;
+    -fx-border-color: transparent;
+}
+
+.nav-active:hover {
+    -fx-background-color: #1d4ed8;
+    -fx-border-color: transparent;
+}
+
+.nav-active:pressed {
+    -fx-background-color: #1e40af;
+    -fx-border-color: transparent;
+}
