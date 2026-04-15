@@ -31,19 +31,38 @@ src/
     │           ├── service/
     │           │   └── MedicationStore.java
     │           └── ui/
+    │               ├── AppShell.java
     │               ├── HomePage.java
     │               ├── SearchPage.java
-    │               └── MedicationDetailPage.java
+    │               ├── MedicationDetailPage.java
+    │               ├── SchedulePage.java
+    │               ├── InteractionsPage.java
+    │               └── SettingsPage.java
     └── resources/
-        └── style.css
+        ├── style.css
+        └── icons/
+            ├── meds.png
+            ├── meds_active.png
+            ├── schedule.png
+            ├── schedule_active.png
+            ├── interactions.png
+            ├── interactions_active.png
+            ├── settings.png
+            └── settings_active.png
 
-App.java: controls navigation between pages
+App.java: Mostly just launches the app and transfers things to AppShell.java
+AppShell.java: Framework for navigation bar and controller for page navigation
 OpenFdaClient.java: Handles openFDA API calls
 OpenFdaResponse.java: Object for openFDA responses
 DrugLabelResult.java: Object one individual medication from openFDA response
 SavedMedication.java: Simplified medication data to store in personal list
 MedicationStore.java: List of saved medications (probably will be changed with database stuff)
-HomePage.java: UI for homepage
-SearchPage.java: UI for search page
-MedicationDetailPage.java: UI for details page for an individual medication
+
+HomePage.java: medications list page
+    SearchPage.java: medication search within home page
+    MedicationDetailPage.java: details page for an individual medication
+SchedulePage.java: 
+InteractionsPage.java:
+SettingsPage.java:
+
 style.css: UI styling formatting
