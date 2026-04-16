@@ -66,3 +66,7 @@ InteractionsPage.java:
 SettingsPage.java:
 
 style.css: UI styling formatting
+
+https://code.visualstudio.com/docs/sourcecontrol/branches-worktrees
+
+This has been very helpful for figuring out git source control on vscode ^^^
