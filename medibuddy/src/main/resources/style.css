@@ -150,6 +150,19 @@
     -fx-alignment: center;
 }
 
+.danger-button {
+    -fx-background-color: #dc2626;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-padding: 10px 14px;
+}
+
+.danger-button:hover {
+    -fx-background-color: #b91c1c;
+}
+
 .nav-button:hover {
     -fx-background-color: #e5e7eb;
     -fx-border-color: transparent;

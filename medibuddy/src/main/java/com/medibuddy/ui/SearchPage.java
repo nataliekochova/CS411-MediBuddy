@@ -151,10 +151,20 @@ public class SearchPage {
                     Platform.runLater(() -> {
                         resultsContainer.getChildren().clear();
 
-                        Label error = new Label("Error:\n" + ex.getMessage());
-                        error.getStyleClass().add("results-text");
-                        error.setWrapText(true);
-                        resultsContainer.getChildren().add(error);
+                        String message = ex.getMessage().toLowerCase();
+
+                        Label label;
+
+                        if (message.contains("404") || message.contains("not found")) {
+                            label = new Label("No medication found.");
+                        } else {
+                            label = new Label("Error contacting FDA service.");
+                        }
+
+                        label.getStyleClass().add("results-text");
+                        label.setWrapText(true);
+
+                        resultsContainer.getChildren().add(label);
                     });
                 }
             }).start();

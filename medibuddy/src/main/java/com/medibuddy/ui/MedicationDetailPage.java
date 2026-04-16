@@ -2,6 +2,8 @@ package com.medibuddy.ui;
 
 import com.medibuddy.App;
 import com.medibuddy.model.SavedMedication;
+import com.medibuddy.service.MedicationStore;
+
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -15,9 +17,12 @@ public class MedicationDetailPage {
     private final AppShell shell;
     private final SavedMedication medication;
     private final VBox root;
+    private final MedicationStore store;
 
-    public MedicationDetailPage(AppShell shell, SavedMedication medication) {
+    
+    public MedicationDetailPage(AppShell shell, MedicationStore store, SavedMedication medication) {
         this.shell = shell;
+        this.store = store;
         this.medication = medication;
         this.root = build();
     }
@@ -37,6 +42,14 @@ public class MedicationDetailPage {
         backButton.setMaxWidth(Double.MAX_VALUE);
         backButton.getStyleClass().add("button");
         backButton.setOnAction(e -> shell.showMedicationsPage());
+
+        Button removeButton = new Button("Remove from My List");
+        removeButton.getStyleClass().add("danger-button");
+        removeButton.setMaxWidth(Double.MAX_VALUE);
+        removeButton.setOnAction(e -> {
+            store.removeMedication(medication);
+            shell.showMedicationsPage();
+        });
 
         VBox detailsContainer = new VBox(12);
         detailsContainer.getStyleClass().add("results-container");
@@ -59,7 +72,7 @@ public class MedicationDetailPage {
         detailsCard.getStyleClass().add("card");
         VBox.setVgrow(detailsScroll, Priority.ALWAYS);
 
-        VBox content = new VBox(12, title, subtitle, backButton, detailsCard);
+        VBox content = new VBox(12, title, subtitle, backButton, removeButton, detailsCard);
         content.setPadding(new Insets(18));
         content.getStyleClass().add("root");
 

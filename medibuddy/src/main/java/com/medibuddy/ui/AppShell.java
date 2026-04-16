@@ -179,7 +179,7 @@ public class AppShell {
     }
 
     public void showMedicationDetailPage(com.medibuddy.model.SavedMedication medication) {
-        contentArea.getChildren().setAll(new MedicationDetailPage(this, medication).getView());
+        contentArea.getChildren().setAll(new MedicationDetailPage(this, store, medication).getView());
     }
 
     public void showSchedulePage() {

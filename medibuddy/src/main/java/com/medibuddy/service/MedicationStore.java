@@ -16,4 +16,8 @@ public class MedicationStore {
     public void addMedication(SavedMedication medication) {
         medications.add(medication);
     }
+
+    public void removeMedication(SavedMedication medication) {
+        medications.remove(medication);
+    }
 }
