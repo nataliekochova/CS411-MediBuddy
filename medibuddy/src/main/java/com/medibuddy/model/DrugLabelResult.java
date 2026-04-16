@@ -5,13 +5,42 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DrugLabelResult {
+    private List<String> purpose;
+    private List<String> indications_and_usage;
+    private List<String> dosage_and_administration;
+
     private List<String> drug_interactions;
     private List<String> warnings;
     private List<String> warnings_and_cautions;
     private List<String> contraindications;
     private List<String> ask_doctor;
     private List<String> ask_doctor_or_pharmacist;
+
     private OpenFdaMetadata openfda;
+
+    public List<String> getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(List<String> purpose) {
+        this.purpose = purpose;
+    }
+
+    public List<String> getIndications_and_usage() {
+        return indications_and_usage;
+    }
+
+    public void setIndications_and_usage(List<String> indications_and_usage) {
+        this.indications_and_usage = indications_and_usage;
+    }
+
+    public List<String> getDosage_and_administration() {
+        return dosage_and_administration;
+    }
+
+    public void setDosage_and_administration(List<String> dosage_and_administration) {
+        this.dosage_and_administration = dosage_and_administration;
+    }
 
     public List<String> getDrug_interactions() {
         return drug_interactions;

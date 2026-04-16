@@ -1,12 +1,11 @@
 package com.medibuddy.ui;
 
-import com.medibuddy.App;
 import com.medibuddy.client.OpenFdaClient;
 import com.medibuddy.model.DrugLabelResult;
 import com.medibuddy.model.OpenFdaResponse;
 import com.medibuddy.model.SavedMedication;
 import com.medibuddy.service.MedicationStore;
-
+import com.medibuddy.model.OpenFdaMetadata;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -19,7 +18,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.util.List;
-import java.util.Map;
+
 
 public class SearchPage {
 
@@ -233,12 +232,21 @@ public class SearchPage {
         resultsContainer.getChildren().add(createTextCard("Dosage", getFirstText(result.getDosage_and_administration())));
     }
 
-    private String getOpenFdaValue(Map<String, List<String>> openfda, String key) {
-        if (openfda != null && openfda.containsKey(key) && !openfda.get(key).isEmpty()) {
-            return openfda.get(key).get(0);
-        }
+    private String getOpenFdaValue(OpenFdaMetadata openfda, String key) {
+    if (openfda == null) {
         return "N/A";
     }
+
+    return switch (key) {
+        case "brand_name" ->
+                getFirstText(openfda.getBrand_name());
+        case "generic_name" ->
+                getFirstText(openfda.getGeneric_name());
+        case "manufacturer_name" ->
+                getFirstText(openfda.getManufacturer_name());
+        default -> "N/A";
+    };
+}
 
     private String getFirstText(List<String> values) {
         if (values == null || values.isEmpty() || values.get(0) == null || values.get(0).isBlank()) {

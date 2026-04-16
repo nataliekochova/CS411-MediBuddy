@@ -4,14 +4,14 @@ package com.medibuddy.model;
 import java.util.List;
 
 public class OpenFdaResponse {
-    private OpenFdaMeta meta;
+    private OpenFdaMetadata meta;
     private List<DrugLabelResult> results;
 
-    public OpenFdaMeta getMeta() {
+    public OpenFdaMetadata getMeta() {
         return meta;
     }
 
-    public void setMeta(OpenFdaMeta meta) {
+    public void setMeta(OpenFdaMetadata meta) {
         this.meta = meta;
     }
 
