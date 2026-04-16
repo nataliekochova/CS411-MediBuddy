@@ -32,7 +32,7 @@ public class OpenFdaClient {
         String url = BASE_URL
                 + "?search=openfda.generic_name:"
                 + encodedName
-                + "&limit=3";
+                + "&limit=8";
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))

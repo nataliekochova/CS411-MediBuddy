@@ -120,8 +120,6 @@ public class SearchPage {
                 return;
             }
 
-            
-
             resultsContainer.getChildren().clear();
 
             Label loading = new Label("Searching...");
@@ -143,10 +141,9 @@ public class SearchPage {
                             none.setWrapText(true);
                             resultsContainer.getChildren().add(none);
                         } else {
-                            DrugLabelResult first = response.getResults().get(0);
-                            currentResult = first;
-                            addButton.setDisable(false);
-                            showDrugResult(resultsContainer, first);
+                            currentResult = null;
+                            addButton.setDisable(true);
+                            showSearchResults(resultsContainer, response.getResults());
                         }
                     });
 
@@ -230,6 +227,53 @@ public class SearchPage {
         resultsContainer.getChildren().add(createTextCard("Indications", getFirstText(result.getIndications_and_usage())));
         resultsContainer.getChildren().add(createTextCard("Warnings", getFirstText(result.getWarnings())));
         resultsContainer.getChildren().add(createTextCard("Dosage", getFirstText(result.getDosage_and_administration())));
+    }
+
+    private void showSearchResults(VBox resultsContainer, List<DrugLabelResult> results) {
+        resultsContainer.getChildren().clear();
+
+        for (DrugLabelResult result : results) {
+            resultsContainer.getChildren().add(createSearchResultCard(result));
+        }
+    }
+
+    private VBox createSearchResultCard(DrugLabelResult result) {
+        Label title = new Label(getDisplayTitle(result));
+        title.getStyleClass().add("card-title");
+
+        VBox card = new VBox(8);
+        card.getStyleClass().add("info-card");
+
+        card.getChildren().add(title);
+        card.getChildren().add(createField("Brand", getOpenFdaValue(result.getOpenfda(), "brand_name")));
+        card.getChildren().add(createField("Generic", getOpenFdaValue(result.getOpenfda(), "generic_name")));
+        card.getChildren().add(createField("Manufacturer", getOpenFdaValue(result.getOpenfda(), "manufacturer_name")));
+
+        Button selectButton = new Button("Select");
+        selectButton.getStyleClass().add("button");
+        selectButton.setMaxWidth(Double.MAX_VALUE);
+
+        selectButton.setOnAction(e -> {
+            currentResult = result;
+            addButton.setDisable(false);
+        });
+
+        card.getChildren().add(selectButton);
+
+        return card;
+    }
+
+    private String getDisplayTitle(DrugLabelResult result) {
+        String brand = getOpenFdaValue(result.getOpenfda(), "brand_name");
+        String generic = getOpenFdaValue(result.getOpenfda(), "generic_name");
+
+        if (!"N/A".equals(brand)) {
+            return brand;
+        }
+        if (!"N/A".equals(generic)) {
+            return generic;
+        }
+        return "Unnamed Medication";
     }
 
     private String getOpenFdaValue(OpenFdaMetadata openfda, String key) {
