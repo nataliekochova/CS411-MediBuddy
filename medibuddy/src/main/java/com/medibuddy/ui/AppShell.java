@@ -187,7 +187,9 @@ public class AppShell {
     }
 
     public void showInteractionsPage() {
-        contentArea.getChildren().setAll(new InteractionsPage().getView());
+        contentArea.getChildren().setAll(
+            new InteractionsPage(client, store).getView()
+        );
     }
 
     public void showSettingsPage() {

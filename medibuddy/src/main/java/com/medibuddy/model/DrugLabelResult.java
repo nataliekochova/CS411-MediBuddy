@@ -1,33 +1,24 @@
 package com.medibuddy.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.util.List;
-import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DrugLabelResult {
-    private Map<String, List<String>> openfda;
-    private List<String> indications_and_usage;
+    private List<String> drug_interactions;
     private List<String> warnings;
-    private List<String> purpose;
-    private List<String> dosage_and_administration;
-    private List<String> description;
+    private List<String> warnings_and_cautions;
+    private List<String> contraindications;
+    private List<String> ask_doctor;
+    private List<String> ask_doctor_or_pharmacist;
+    private OpenFdaMetadata openfda;
 
-    public Map<String, List<String>> getOpenfda() {
-        return openfda;
+    public List<String> getDrug_interactions() {
+        return drug_interactions;
     }
 
-    public void setOpenfda(Map<String, List<String>> openfda) {
-        this.openfda = openfda;
-    }
-
-    public List<String> getIndications_and_usage() {
-        return indications_and_usage;
-    }
-
-    public void setIndications_and_usage(List<String> indications_and_usage) {
-        this.indications_and_usage = indications_and_usage;
+    public void setDrug_interactions(List<String> drug_interactions) {
+        this.drug_interactions = drug_interactions;
     }
 
     public List<String> getWarnings() {
@@ -38,27 +29,43 @@ public class DrugLabelResult {
         this.warnings = warnings;
     }
 
-    public List<String> getPurpose() {
-        return purpose;
+    public List<String> getWarnings_and_cautions() {
+        return warnings_and_cautions;
     }
 
-    public void setPurpose(List<String> purpose) {
-        this.purpose = purpose;
+    public void setWarnings_and_cautions(List<String> warnings_and_cautions) {
+        this.warnings_and_cautions = warnings_and_cautions;
     }
 
-    public List<String> getDosage_and_administration() {
-        return dosage_and_administration;
+    public List<String> getContraindications() {
+        return contraindications;
     }
 
-    public void setDosage_and_administration(List<String> dosage_and_administration) {
-        this.dosage_and_administration = dosage_and_administration;
+    public void setContraindications(List<String> contraindications) {
+        this.contraindications = contraindications;
     }
 
-    public List<String> getDescription() {
-        return description;
+    public List<String> getAsk_doctor() {
+        return ask_doctor;
     }
 
-    public void setDescription(List<String> description) {
-        this.description = description;
+    public void setAsk_doctor(List<String> ask_doctor) {
+        this.ask_doctor = ask_doctor;
+    }
+
+    public List<String> getAsk_doctor_or_pharmacist() {
+        return ask_doctor_or_pharmacist;
+    }
+
+    public void setAsk_doctor_or_pharmacist(List<String> ask_doctor_or_pharmacist) {
+        this.ask_doctor_or_pharmacist = ask_doctor_or_pharmacist;
+    }
+
+    public OpenFdaMetadata getOpenfda() {
+        return openfda;
+    }
+
+    public void setOpenfda(OpenFdaMetadata openfda) {
+        this.openfda = openfda;
     }
 }
