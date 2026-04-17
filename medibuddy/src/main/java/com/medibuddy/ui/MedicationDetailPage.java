@@ -1,6 +1,5 @@
 package com.medibuddy.ui;
 
-import com.medibuddy.App;
 import com.medibuddy.model.SavedMedication;
 import com.medibuddy.service.MedicationStore;
 
@@ -19,7 +18,6 @@ public class MedicationDetailPage {
     private final VBox root;
     private final MedicationStore store;
 
-    
     public MedicationDetailPage(AppShell shell, MedicationStore store, SavedMedication medication) {
         this.shell = shell;
         this.store = store;
@@ -55,10 +53,12 @@ public class MedicationDetailPage {
         detailsContainer.getStyleClass().add("results-container");
 
         detailsContainer.getChildren().add(createInfoCard());
+        detailsContainer.getChildren().add(createTextCard("My Dose", medication.getUserDose()));
+        detailsContainer.getChildren().add(createTextCard("My Form", medication.getUserForm()));
         detailsContainer.getChildren().add(createTextCard("Purpose", medication.getPurpose()));
         detailsContainer.getChildren().add(createTextCard("Indications", medication.getIndications()));
         detailsContainer.getChildren().add(createTextCard("Warnings", medication.getWarnings()));
-        detailsContainer.getChildren().add(createTextCard("Dosage", medication.getDosage()));
+        detailsContainer.getChildren().add(createTextCard("Label Dosage Guidance", medication.getLabelDosage()));
 
         ScrollPane detailsScroll = new ScrollPane(detailsContainer);
         detailsScroll.setFitToWidth(true);
@@ -85,6 +85,7 @@ public class MedicationDetailPage {
         card.getChildren().add(createField("Brand", medication.getBrandName()));
         card.getChildren().add(createField("Generic", medication.getGenericName()));
         card.getChildren().add(createField("Manufacturer", medication.getManufacturer()));
+        card.getChildren().add(createField("Dose / Form", medication.getDoseAndFormDisplay()));
 
         return card;
     }

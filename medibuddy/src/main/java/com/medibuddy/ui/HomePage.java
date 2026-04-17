@@ -1,6 +1,5 @@
 package com.medibuddy.ui;
 
-import com.medibuddy.App;
 import com.medibuddy.model.SavedMedication;
 import com.medibuddy.service.MedicationStore;
 import javafx.geometry.Insets;
@@ -51,11 +50,22 @@ public class HomePage {
             medList.getChildren().add(empty);
         } else {
             for (SavedMedication med : store.getMedications()) {
-                Button medButton = new Button(med.getDisplayName());
+                Label nameLabel = new Label(med.getDisplayName());
+                nameLabel.getStyleClass().add("card-title");
+
+                Label doseFormLabel = new Label(med.getDoseAndFormDisplay());
+                doseFormLabel.getStyleClass().add("subtitle");
+                doseFormLabel.setWrapText(true);
+
+                VBox medButtonContent = new VBox(4, nameLabel, doseFormLabel);
+
+                Button medButton = new Button();
+                medButton.setGraphic(medButtonContent);
                 medButton.getStyleClass().add("med-list-button");
                 medButton.setMaxWidth(Double.MAX_VALUE);
                 medButton.setWrapText(true);
                 medButton.setOnAction(e -> shell.showMedicationDetailPage(med));
+
                 medList.getChildren().add(medButton);
             }
         }
