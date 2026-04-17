@@ -197,7 +197,15 @@ public class SearchPage {
                         resultsContainer.getChildren().clear();
 
                         if (response.getResults() == null || response.getResults().isEmpty()) {
-                            Label none = new Label("No medication found.");
+                            Label none = new Label("No medication found. You can add it manually below.");
+                            none.getStyleClass().add("results-text");
+                            none.setWrapText(true);
+
+                            doseInput.setDisable(false);
+                            formInput.setDisable(false);
+
+                            resultsContainer.getChildren().add(none);
+                            resultsContainer.getChildren().add(createManualAddButton(medName));
                             none.getStyleClass().add("results-text");
                             none.setWrapText(true);
                             resultsContainer.getChildren().add(none);
@@ -214,7 +222,15 @@ public class SearchPage {
                     Platform.runLater(() -> {
                         resultsContainer.getChildren().clear();
 
-                        Label none = new Label("No medication found.");
+                        Label none = new Label("No medication found. You can add it manually below.");
+                        none.getStyleClass().add("results-text");
+                        none.setWrapText(true);
+
+                        doseInput.setDisable(false);
+                        formInput.setDisable(false);
+
+                        resultsContainer.getChildren().add(none);
+                        resultsContainer.getChildren().add(createManualAddButton(medName));
                         none.getStyleClass().add("results-text");
                         none.setWrapText(true);
 
@@ -240,6 +256,52 @@ public class SearchPage {
                 userForm
         );
     }
+
+    private Button createManualAddButton(String medName) {
+        Button manualButton = new Button("Add \"" + medName + "\" Manually");
+        manualButton.getStyleClass().add("button");
+        manualButton.setMaxWidth(Double.MAX_VALUE);
+
+        manualButton.setOnAction(e -> {
+            String userDose = doseInput.getText().trim();
+            String userForm = formInput.getText().trim();
+
+            if (medName.isBlank()) {
+                return;
+            }
+
+            if (userDose.isEmpty() || userForm.isEmpty()) {
+                resultsContainer.getChildren().clear();
+
+                Label prompt = new Label("Please enter both a dose and a form before adding manually.");
+                prompt.getStyleClass().add("results-text");
+                prompt.setWrapText(true);
+
+                resultsContainer.getChildren().add(prompt);
+                resultsContainer.getChildren().add(createManualAddButton(medName));
+                return;
+            }
+
+            store.addMedication(toManualMedication(medName, userDose, userForm));
+            shell.showMedicationsPage();
+        });
+
+        return manualButton;
+    }
+
+    private SavedMedication toManualMedication(String name, String userDose, String userForm) {
+    return new SavedMedication(
+            "N/A",     // brandName
+            name,      // genericName
+            "N/A",     // manufacturer
+            "N/A",     // purpose
+            "N/A",     // indications
+            "N/A",     // warnings
+            "N/A",     // labelDosage
+            userDose,  // userDose
+            userForm   // userForm
+    );
+}
 
     private void showSearchResults(List<DrugLabelResult> results) {
         resultsContainer.getChildren().clear();
