@@ -150,8 +150,8 @@ public class AppShell {
 
         scheduleButton.setOnAction(e -> {
             setActivePage("schedule");
-            showSchedulePage();
-            contentArea.getChildren().setAll(new SchedulePage(store).getView());
+            //showSchedulePage();
+            contentArea.getChildren().setAll(new SchedulePage(store).getView()); //this might need adding back
         });
 
         interactionsButton.setOnAction(e -> {
@@ -183,8 +183,12 @@ public class AppShell {
         contentArea.getChildren().setAll(new MedicationDetailPage(this, store, medication).getView());
     }
 
-    public void showSchedulePage() {
-        contentArea.getChildren().setAll(new SchedulePage(store).getView());
+   // public void showSchedulePage() {
+        //contentArea.getChildren().setAll(new SchedulePage(store).getView());
+        public void showSchedulePage() {
+        SchedulePage page = new SchedulePage(store);  // new page
+        //page.refresh();                               // 
+        contentArea.getChildren().setAll(page.getView());
     }
 
     public void showInteractionsPage() {

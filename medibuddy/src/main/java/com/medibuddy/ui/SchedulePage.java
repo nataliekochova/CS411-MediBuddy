@@ -47,12 +47,22 @@ public class SchedulePage {
             for (MedicationSchedule sched : med.getSchedules()) {
 
                 // Only daily for now — weekly/monthly later
-                if ("daily".equals(sched.getFrequencyType())) {
+                if ("daily".equalsIgnoreCase(sched.getFrequencyType())) {
                     list.getItems().add(
                         med.getDisplayName() + " at " + sched.getTime() + " (" + sched.getFrequencyPerDay() + "x)"
                     );
                 }
             }
         }
+
+        
     }
+    public void refresh() {
+    // The ListView is the second child in root (index 1)
+    ListView<String> doseList = (ListView<String>) root.getChildren().get(1);
+
+    // Rebuild today's list
+    LocalDate today = LocalDate.now();
+    updateDoseListForDate(today, doseList);
+}
 }
