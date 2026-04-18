@@ -1,5 +1,8 @@
 package com.medibuddy.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SavedMedication {
     private final String brandName;
     private final String genericName;
@@ -8,6 +11,7 @@ public class SavedMedication {
     private final String indications;
     private final String warnings;
     private final String dosage;
+    private List<MedicationSchedule> schedules = new ArrayList<>();
 
     public SavedMedication(
             String brandName,
@@ -64,4 +68,17 @@ public class SavedMedication {
         }
         return "Unknown Medication";
     }
+
+    public void addSchedule(MedicationSchedule schedule) {
+    schedules.add(schedule);
+}
+
+    public List<MedicationSchedule> getSchedules() {
+        return schedules;
+}
+
+public String getName() {
+    return getDisplayName();
+}
+    
 }

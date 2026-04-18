@@ -151,6 +151,7 @@ public class AppShell {
         scheduleButton.setOnAction(e -> {
             setActivePage("schedule");
             showSchedulePage();
+            contentArea.getChildren().setAll(new SchedulePage(store).getView());
         });
 
         interactionsButton.setOnAction(e -> {
@@ -183,7 +184,7 @@ public class AppShell {
     }
 
     public void showSchedulePage() {
-        contentArea.getChildren().setAll(new SchedulePage().getView());
+        contentArea.getChildren().setAll(new SchedulePage(store).getView());
     }
 
     public void showInteractionsPage() {
