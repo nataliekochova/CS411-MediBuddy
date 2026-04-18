@@ -1,6 +1,5 @@
 package com.medibuddy.ui;
 
-import com.medibuddy.App;
 import com.medibuddy.model.MedicationSchedule;
 import com.medibuddy.model.SavedMedication;
 import com.medibuddy.service.MedicationStore;
@@ -27,7 +26,6 @@ public class MedicationDetailPage {
     private ChoiceBox<String> frequencyTypeBox;
     private MedicationSchedule scheduleBeingEdited = null;
 
-    
     public MedicationDetailPage(AppShell shell, MedicationStore store, SavedMedication medication) {
         this.shell = shell;
         this.store = store;
@@ -63,76 +61,77 @@ public class MedicationDetailPage {
         detailsContainer.getStyleClass().add("results-container");
 
         detailsContainer.getChildren().add(createInfoCard());
+        detailsContainer.getChildren().add(createTextCard("My Dose", medication.getUserDose()));
+        detailsContainer.getChildren().add(createTextCard("My Form", medication.getUserForm()));
         detailsContainer.getChildren().add(createTextCard("Purpose", medication.getPurpose()));
         detailsContainer.getChildren().add(createTextCard("Indications", medication.getIndications()));
         detailsContainer.getChildren().add(createTextCard("Warnings", medication.getWarnings()));
-        detailsContainer.getChildren().add(createTextCard("Dosage", medication.getDosage()));
+        detailsContainer.getChildren().add(createTextCard("Label Dosage Guidance", medication.getLabelDosage()));
 
         VBox schedulesCard = createCard("Saved Schedules");
         updateSchedulesList(schedulesCard);
-    detailsContainer.getChildren().add(schedulesCard);
+        detailsContainer.getChildren().add(schedulesCard);
 
-        // --- Schedule UI ---
-VBox scheduleCard = createCard("Add Schedule");
+        VBox scheduleCard = createCard("Add Schedule");
 
-timeField = new TextField();
-timeField.setPromptText("Time:(e.g. 08:00)");
+        timeField = new TextField();
+        timeField.setPromptText("Time (e.g. 08:00)");
 
-frequencyField = new TextField();
-frequencyField.setPromptText("Frequency: (e.g. 1)");
+        frequencyField = new TextField();
+        frequencyField.setPromptText("Frequency (e.g. 1)");
 
-frequencyTypeBox = new ChoiceBox<>();
-frequencyTypeBox.getItems().addAll("Daily", "Weekly", "Monthly");
-frequencyTypeBox.setValue("daily");
-
-Label scheduleErrorLabel = new Label();
-scheduleErrorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11px;");
-scheduleErrorLabel.setVisible(false);
-
-Button saveScheduleButton = new Button("Save Schedule");
-saveScheduleButton.setMaxWidth(Double.MAX_VALUE);
-
-saveScheduleButton.setOnAction(e -> {
-    // Validation: any field empty?
-    String time = timeField.getText();
-    
-    String type = frequencyTypeBox.getValue();
-    String freqText = frequencyField.getText();
-    
-    if (time.isBlank() || freqText.isBlank() || type == null || type.isBlank()) {
-        scheduleErrorLabel.setText("Define all parameters of the schedule");
-        scheduleErrorLabel.setVisible(true);
-        return;
-    }
-
-    scheduleErrorLabel.setVisible(false); // hide error if valid
-    try {
-    int freq = Integer.parseInt(frequencyField.getText());
-        MedicationSchedule newSchedule = new MedicationSchedule(time, freq, type);
-        if (scheduleBeingEdited != null) {
-            // We are updating an existing schedule
-            store.removeScheduleFromMedication(medication, scheduleBeingEdited);
-            store.addScheduleToMedication(medication, newSchedule);
-            scheduleBeingEdited = null; // exit edit mode
-        } else {
-            // We are adding a new schedule
-            store.addScheduleToMedication(medication, newSchedule);
-        }
-
-        updateSchedulesList(schedulesCard);
-
-        timeField.clear();
-        frequencyField.clear();
+        frequencyTypeBox = new ChoiceBox<>();
+        frequencyTypeBox.getItems().addAll("Daily", "Weekly", "Monthly");
         frequencyTypeBox.setValue("Daily");
 
-    } catch (Exception ex) {
-        System.out.println("Invalid schedule input.");
-    }
-});
+        Label scheduleErrorLabel = new Label();
+        scheduleErrorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11px;");
+        scheduleErrorLabel.setVisible(false);
 
-scheduleCard.getChildren().addAll(timeField, frequencyField, frequencyTypeBox, scheduleErrorLabel, saveScheduleButton);
-detailsContainer.getChildren().add(scheduleCard);
+        Button saveScheduleButton = new Button("Save Schedule");
+        saveScheduleButton.setMaxWidth(Double.MAX_VALUE);
 
+        saveScheduleButton.setOnAction(e -> {
+            String time = timeField.getText();
+            String type = frequencyTypeBox.getValue();
+            String freqText = frequencyField.getText();
+
+            if (time.isBlank() || freqText.isBlank() || type == null || type.isBlank()) {
+                scheduleErrorLabel.setText("Define all parameters of the schedule");
+                scheduleErrorLabel.setVisible(true);
+                return;
+            }
+
+            scheduleErrorLabel.setVisible(false);
+            try {
+                int freq = Integer.parseInt(frequencyField.getText());
+                MedicationSchedule newSchedule = new MedicationSchedule(time, freq, type);
+                if (scheduleBeingEdited != null) {
+                    store.removeScheduleFromMedication(medication, scheduleBeingEdited);
+                    store.addScheduleToMedication(medication, newSchedule);
+                    scheduleBeingEdited = null;
+                } else {
+                    store.addScheduleToMedication(medication, newSchedule);
+                }
+
+                updateSchedulesList(schedulesCard);
+
+                timeField.clear();
+                frequencyField.clear();
+                frequencyTypeBox.setValue("Daily");
+            } catch (Exception ex) {
+                System.out.println("Invalid schedule input.");
+            }
+        });
+
+        scheduleCard.getChildren().addAll(
+                timeField,
+                frequencyField,
+                frequencyTypeBox,
+                scheduleErrorLabel,
+                saveScheduleButton
+        );
+        detailsContainer.getChildren().add(scheduleCard);
 
         ScrollPane detailsScroll = new ScrollPane(detailsContainer);
         detailsScroll.setFitToWidth(true);
@@ -159,6 +158,7 @@ detailsContainer.getChildren().add(scheduleCard);
         card.getChildren().add(createField("Brand", medication.getBrandName()));
         card.getChildren().add(createField("Generic", medication.getGenericName()));
         card.getChildren().add(createField("Manufacturer", medication.getManufacturer()));
+        card.getChildren().add(createField("Dose / Form", medication.getDoseAndFormDisplay()));
 
         return card;
     }
@@ -201,50 +201,43 @@ detailsContainer.getChildren().add(scheduleCard);
         }
         return text;
     }
-    
+
     private void updateSchedulesList(VBox schedulesCard) {
-    schedulesCard.getChildren().clear();
+        schedulesCard.getChildren().clear();
 
-    for (MedicationSchedule sched : medication.getSchedules()) {
-        Label label = new Label(
-            sched.getFrequencyType() + " — " +
-            sched.getTime() + " (" + sched.getFrequencyPerDay() + "x)"
-        );
+        for (MedicationSchedule sched : medication.getSchedules()) {
+            Label label = new Label(
+                    sched.getFrequencyType() + " - " +
+                    sched.getTime() + " (" + sched.getFrequencyPerDay() + "x)"
+            );
 
-        Button editBtn = new Button("Edit");
-editBtn.getStyleClass().add("button");
+            Button editBtn = new Button("Edit");
+            editBtn.getStyleClass().add("button");
+            editBtn.setOnAction(e -> {
+                timeField.setText(sched.getTime());
+                frequencyField.setText(String.valueOf(sched.getFrequencyPerDay()));
+                frequencyTypeBox.setValue(sched.getFrequencyType());
+                scheduleBeingEdited = sched;
+                updateSchedulesList(schedulesCard);
+            });
 
-editBtn.setOnAction(e -> {
-    // Pre-fill the form with the existing schedule
-    timeField.setText(sched.getTime());
-    frequencyField.setText(String.valueOf(sched.getFrequencyPerDay()));
-    frequencyTypeBox.setValue(sched.getFrequencyType());
-    scheduleBeingEdited = sched;
-     
+            Button deleteBtn = new Button("Delete");
+            deleteBtn.getStyleClass().add("danger-button");
+            deleteBtn.setOnAction(e -> {
+                store.removeScheduleFromMedication(medication, sched);
+                updateSchedulesList(schedulesCard);
+            });
 
-    // Remove the old schedule so saving creates a new updated one
-    updateSchedulesList(schedulesCard);
-});
+            HBox buttonRow = new HBox(8, editBtn, deleteBtn);
 
-        Button deleteBtn = new Button("Delete");
-        deleteBtn.getStyleClass().add("danger-button");
+            VBox row = new VBox(4, label, buttonRow);
+            row.getStyleClass().add("schedule-row");
 
-        deleteBtn.setOnAction(e -> {
-            store.removeScheduleFromMedication(medication, sched);
-            updateSchedulesList(schedulesCard);
-        });
+            schedulesCard.getChildren().add(row);
+        }
 
-       HBox buttonRow = new HBox(8, editBtn, deleteBtn);
-
-    VBox row = new VBox(4, label, buttonRow);
-        row.getStyleClass().add("schedule-row");
-
-        schedulesCard.getChildren().add(row);
+        if (medication.getSchedules().isEmpty()) {
+            schedulesCard.getChildren().add(new Label("No schedules saved."));
+        }
     }
-
-    if (medication.getSchedules().isEmpty()) {
-        schedulesCard.getChildren().add(new Label("No schedules saved."));
-    }
-}
-    
 }

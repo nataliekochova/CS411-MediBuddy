@@ -2,10 +2,10 @@ package com.medibuddy.ui;
 
 import com.medibuddy.client.OpenFdaClient;
 import com.medibuddy.model.DrugLabelResult;
+import com.medibuddy.model.OpenFdaMetadata;
 import com.medibuddy.model.OpenFdaResponse;
 import com.medibuddy.model.SavedMedication;
 import com.medibuddy.service.MedicationStore;
-import com.medibuddy.model.OpenFdaMetadata;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -14,11 +14,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.util.List;
-
 
 public class SearchPage {
 
@@ -29,6 +29,9 @@ public class SearchPage {
 
     private DrugLabelResult currentResult;
     private Button addButton;
+    private TextField doseInput;
+    private TextField formInput;
+    private VBox resultsContainer;
 
     public SearchPage(AppShell shell, OpenFdaClient client, MedicationStore store) {
         this.shell = shell;
@@ -62,25 +65,68 @@ public class SearchPage {
         searchButton.setMaxWidth(Double.MAX_VALUE);
         searchButton.getStyleClass().add("button");
 
+        Label doseLabel = new Label("Dose");
+        doseLabel.getStyleClass().add("field-label");
+
+        doseInput = new TextField();
+        doseInput.setPromptText("e.g. 10 mg");
+        doseInput.setMaxWidth(Double.MAX_VALUE);
+        doseInput.getStyleClass().add("text-field");
+        doseInput.setDisable(true);
+
+        VBox doseBox = new VBox(4, doseLabel, doseInput);
+        HBox.setHgrow(doseBox, Priority.ALWAYS);
+
+        Label formLabel = new Label("Form");
+        formLabel.getStyleClass().add("field-label");
+
+        formInput = new TextField();
+        formInput.setPromptText("e.g. tablet");
+        formInput.setMaxWidth(Double.MAX_VALUE);
+        formInput.getStyleClass().add("text-field");
+        formInput.setDisable(true);
+
+        VBox formBox = new VBox(4, formLabel, formInput);
+        HBox.setHgrow(formBox, Priority.ALWAYS);
+
+        HBox doseFormRow = new HBox(10, doseBox, formBox);
+        doseFormRow.setFillHeight(true);
+
         addButton = new Button("Add to My List");
         addButton.setMaxWidth(Double.MAX_VALUE);
         addButton.getStyleClass().add("button");
         addButton.setDisable(true);
 
         addButton.setOnAction(e -> {
-            if (currentResult != null) {
-                store.addMedication(toSavedMedication(currentResult));
-                shell.showMedicationsPage();
+            if (currentResult == null) {
+                return;
             }
+
+            String userDose = doseInput.getText().trim();
+            String userForm = formInput.getText().trim();
+
+            if (userDose.isEmpty() || userForm.isEmpty()) {
+                resultsContainer.getChildren().clear();
+
+                Label prompt = new Label("Please enter both a dose and a form before adding.");
+                prompt.getStyleClass().add("results-text");
+                prompt.setWrapText(true);
+
+                resultsContainer.getChildren().add(prompt);
+                return;
+            }
+
+            store.addMedication(toSavedMedication(currentResult, userDose, userForm));
+            shell.showMedicationsPage();
         });
 
         Label resultsTitle = new Label("Results");
         resultsTitle.getStyleClass().add("section-title");
 
-        VBox resultsContainer = new VBox(12);
+        resultsContainer = new VBox(12);
         resultsContainer.getStyleClass().add("results-container");
 
-        Label placeholder = new Label("Search for a medication to see details.");
+        Label placeholder = new Label("Search for a medication to see matching options.");
         placeholder.getStyleClass().add("results-text");
         placeholder.setWrapText(true);
         resultsContainer.getChildren().add(placeholder);
@@ -89,7 +135,8 @@ public class SearchPage {
         resultsScroll.setFitToWidth(true);
         resultsScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         resultsScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        resultsScroll.setPrefHeight(360);
+        resultsScroll.setPrefHeight(220);
+        resultsScroll.setMinHeight(150);
         resultsScroll.getStyleClass().add("results-scroll");
 
         VBox resultsCard = new VBox(10, resultsTitle, resultsScroll);
@@ -97,7 +144,17 @@ public class SearchPage {
         resultsCard.getStyleClass().add("card");
         VBox.setVgrow(resultsScroll, Priority.ALWAYS);
 
-        VBox content = new VBox(12, title, subtitle, backButton, input, searchButton, addButton, resultsCard);
+        VBox content = new VBox(
+                10,
+                title,
+                subtitle,
+                backButton,
+                input,
+                searchButton,
+                doseFormRow,
+                addButton,
+                resultsCard
+        );
         content.setPadding(new Insets(18));
         content.getStyleClass().add("root");
 
@@ -108,6 +165,10 @@ public class SearchPage {
 
             currentResult = null;
             addButton.setDisable(true);
+            doseInput.setDisable(true);
+            formInput.setDisable(true);
+            doseInput.clear();
+            formInput.clear();
 
             if (medName.isEmpty()) {
                 resultsContainer.getChildren().clear();
@@ -136,14 +197,24 @@ public class SearchPage {
                         resultsContainer.getChildren().clear();
 
                         if (response.getResults() == null || response.getResults().isEmpty()) {
-                            Label none = new Label("No results found.");
+                            Label none = new Label("No medication found. You can add it manually below.");
+                            none.getStyleClass().add("results-text");
+                            none.setWrapText(true);
+
+                            doseInput.setDisable(false);
+                            formInput.setDisable(false);
+
+                            resultsContainer.getChildren().add(none);
+                            resultsContainer.getChildren().add(createManualAddButton(medName));
                             none.getStyleClass().add("results-text");
                             none.setWrapText(true);
                             resultsContainer.getChildren().add(none);
                         } else {
                             currentResult = null;
                             addButton.setDisable(true);
-                            showSearchResults(resultsContainer, response.getResults());
+                            doseInput.setDisable(true);
+                            formInput.setDisable(true);
+                            showSearchResults(response.getResults());
                         }
                     });
 
@@ -151,31 +222,28 @@ public class SearchPage {
                     Platform.runLater(() -> {
                         resultsContainer.getChildren().clear();
 
-                        String message = ex.getMessage().toLowerCase();
+                        Label none = new Label("No medication found. You can add it manually below.");
+                        none.getStyleClass().add("results-text");
+                        none.setWrapText(true);
 
-                        Label label;
+                        doseInput.setDisable(false);
+                        formInput.setDisable(false);
 
-                        if (message.contains("404") || message.contains("not found")) {
-                            label = new Label("No medication found.");
-                        } else {
-                            label = new Label("Error contacting FDA service.");
-                        }
+                        resultsContainer.getChildren().add(none);
+                        resultsContainer.getChildren().add(createManualAddButton(medName));
+                        none.getStyleClass().add("results-text");
+                        none.setWrapText(true);
 
-                        label.getStyleClass().add("results-text");
-                        label.setWrapText(true);
-
-                        resultsContainer.getChildren().add(label);
+                        resultsContainer.getChildren().add(none);
                     });
                 }
             }).start();
         });
 
-        
-
         return content;
     }
 
-    private SavedMedication toSavedMedication(DrugLabelResult result) {
+    private SavedMedication toSavedMedication(DrugLabelResult result, String userDose, String userForm) {
         return new SavedMedication(
                 getOpenFdaValue(result.getOpenfda(), "brand_name"),
                 getOpenFdaValue(result.getOpenfda(), "generic_name"),
@@ -183,63 +251,59 @@ public class SearchPage {
                 getFirstText(result.getPurpose()),
                 getFirstText(result.getIndications_and_usage()),
                 getFirstText(result.getWarnings()),
-                getFirstText(result.getDosage_and_administration())
+                getFirstText(result.getDosage_and_administration()),
+                userDose,
+                userForm
         );
     }
 
-    private VBox createInfoCard(DrugLabelResult result) {
-        VBox card = createCard("Basic Information");
+    private Button createManualAddButton(String medName) {
+        Button manualButton = new Button("Add \"" + medName + "\" Manually");
+        manualButton.getStyleClass().add("button");
+        manualButton.setMaxWidth(Double.MAX_VALUE);
 
-        card.getChildren().add(createField("Brand", getOpenFdaValue(result.getOpenfda(), "brand_name")));
-        card.getChildren().add(createField("Generic", getOpenFdaValue(result.getOpenfda(), "generic_name")));
-        card.getChildren().add(createField("Manufacturer", getOpenFdaValue(result.getOpenfda(), "manufacturer_name")));
+        manualButton.setOnAction(e -> {
+            String userDose = doseInput.getText().trim();
+            String userForm = formInput.getText().trim();
 
-        return card;
+            if (medName.isBlank()) {
+                return;
+            }
+
+            if (userDose.isEmpty() || userForm.isEmpty()) {
+                resultsContainer.getChildren().clear();
+
+                Label prompt = new Label("Please enter both a dose and a form before adding manually.");
+                prompt.getStyleClass().add("results-text");
+                prompt.setWrapText(true);
+
+                resultsContainer.getChildren().add(prompt);
+                resultsContainer.getChildren().add(createManualAddButton(medName));
+                return;
+            }
+
+            store.addMedication(toManualMedication(medName, userDose, userForm));
+            shell.showMedicationsPage();
+        });
+
+        return manualButton;
     }
 
-    private VBox createTextCard(String title, String content) {
-        VBox card = createCard(title);
+    private SavedMedication toManualMedication(String name, String userDose, String userForm) {
+    return new SavedMedication(
+            "N/A",     // brandName
+            name,      // genericName
+            "N/A",     // manufacturer
+            "N/A",     // purpose
+            "N/A",     // indications
+            "N/A",     // warnings
+            "N/A",     // labelDosage
+            userDose,  // userDose
+            userForm   // userForm
+    );
+}
 
-        Label body = new Label(content == null || content.isBlank() ? "N/A" : content);
-        body.setWrapText(true);
-        body.getStyleClass().add("card-body");
-
-        card.getChildren().add(body);
-        return card;
-    }
-
-    private VBox createCard(String titleText) {
-        Label title = new Label(titleText);
-        title.getStyleClass().add("card-title");
-
-        VBox card = new VBox(8, title);
-        card.getStyleClass().add("info-card");
-
-        return card;
-    }
-
-    private VBox createField(String labelText, String valueText) {
-        Label label = new Label(labelText);
-        label.getStyleClass().add("field-label");
-
-        Label value = new Label((valueText == null || valueText.isBlank()) ? "N/A" : valueText);
-        value.setWrapText(true);
-        value.getStyleClass().add("field-value");
-
-        return new VBox(2, label, value);
-    }
-
-    private void showDrugResult(VBox resultsContainer, DrugLabelResult result) {
-        resultsContainer.getChildren().clear();
-
-        resultsContainer.getChildren().add(createInfoCard(result));
-        resultsContainer.getChildren().add(createTextCard("Purpose", getFirstText(result.getPurpose())));
-        resultsContainer.getChildren().add(createTextCard("Indications", getFirstText(result.getIndications_and_usage())));
-        resultsContainer.getChildren().add(createTextCard("Warnings", getFirstText(result.getWarnings())));
-        resultsContainer.getChildren().add(createTextCard("Dosage", getFirstText(result.getDosage_and_administration())));
-    }
-
-    private void showSearchResults(VBox resultsContainer, List<DrugLabelResult> results) {
+    private void showSearchResults(List<DrugLabelResult> results) {
         resultsContainer.getChildren().clear();
 
         for (DrugLabelResult result : results) {
@@ -250,6 +314,7 @@ public class SearchPage {
     private VBox createSearchResultCard(DrugLabelResult result) {
         Label title = new Label(getDisplayTitle(result));
         title.getStyleClass().add("card-title");
+        title.setWrapText(true);
 
         VBox card = new VBox(8);
         card.getStyleClass().add("info-card");
@@ -266,6 +331,9 @@ public class SearchPage {
         selectButton.setOnAction(e -> {
             currentResult = result;
             addButton.setDisable(false);
+            doseInput.setDisable(false);
+            formInput.setDisable(false);
+            selectButton.setText("Selected");
         });
 
         card.getChildren().add(selectButton);
@@ -286,21 +354,29 @@ public class SearchPage {
         return "Unnamed Medication";
     }
 
-    private String getOpenFdaValue(OpenFdaMetadata openfda, String key) {
-    if (openfda == null) {
-        return "N/A";
+    private VBox createField(String labelText, String valueText) {
+        Label label = new Label(labelText);
+        label.getStyleClass().add("field-label");
+
+        Label value = new Label((valueText == null || valueText.isBlank()) ? "N/A" : valueText);
+        value.setWrapText(true);
+        value.getStyleClass().add("field-value");
+
+        return new VBox(2, label, value);
     }
 
-    return switch (key) {
-        case "brand_name" ->
-                getFirstText(openfda.getBrand_name());
-        case "generic_name" ->
-                getFirstText(openfda.getGeneric_name());
-        case "manufacturer_name" ->
-                getFirstText(openfda.getManufacturer_name());
-        default -> "N/A";
-    };
-}
+    private String getOpenFdaValue(OpenFdaMetadata openfda, String key) {
+        if (openfda == null) {
+            return "N/A";
+        }
+
+        return switch (key) {
+            case "brand_name" -> getFirstText(openfda.getBrand_name());
+            case "generic_name" -> getFirstText(openfda.getGeneric_name());
+            case "manufacturer_name" -> getFirstText(openfda.getManufacturer_name());
+            default -> "N/A";
+        };
+    }
 
     private String getFirstText(List<String> values) {
         if (values == null || values.isEmpty() || values.get(0) == null || values.get(0).isBlank()) {
