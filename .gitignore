@@ -17,3 +17,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.swp
+
+# SQLite database
+*.db
+*.sqlite

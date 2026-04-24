@@ -11,11 +11,13 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import com.medibuddy.App;
 
 public class AppShell {
 
     private final OpenFdaClient client;
     private final MedicationStore store;
+    private final App app;
 
     private final BorderPane root;
     private final StackPane contentArea;
@@ -30,7 +32,8 @@ public class AppShell {
     private ImageView interactionsIcon;
     private ImageView settingsIcon;
 
-    public AppShell(OpenFdaClient client, MedicationStore store) {
+    public AppShell(App app, OpenFdaClient client, MedicationStore store) {
+        this.app = app;
         this.client = client;
         this.store = store;
         this.root = new BorderPane();
@@ -183,6 +186,10 @@ public class AppShell {
         contentArea.getChildren().setAll(new MedicationDetailPage(this, store, medication).getView());
     }
 
+    public void logout() {
+        app.showLoginPage();
+    }
+
    // public void showSchedulePage() {
         //contentArea.getChildren().setAll(new SchedulePage(store).getView());
         public void showSchedulePage() {
@@ -198,6 +205,6 @@ public class AppShell {
     }
 
     public void showSettingsPage() {
-        contentArea.getChildren().setAll(new SettingsPage().getView());
+        contentArea.getChildren().setAll(new SettingsPage(this).getView());
     }
 }
