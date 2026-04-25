@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 
 public class HomePage {
     private final AppShell shell;
@@ -26,8 +27,8 @@ public class HomePage {
     }
 
     private VBox build() {
-        Label title = new Label("MediBuddy");
-        title.getStyleClass().add("title");
+        //Label title = new Label("MediBuddy");
+        //title.getStyleClass().add("title");
 
         Label subtitle = new Label("My Medications");
         subtitle.getStyleClass().add("subtitle");
@@ -77,12 +78,20 @@ public class HomePage {
         medScroll.setPrefHeight(420);
         medScroll.getStyleClass().add("results-scroll");
 
+        Rectangle clip = new Rectangle();
+clip.widthProperty().bind(medScroll.widthProperty());
+clip.heightProperty().bind(medScroll.heightProperty());
+clip.setArcWidth(16);
+clip.setArcHeight(16);
+medScroll.setClip(clip);
+
         VBox card = new VBox(10, savedTitle, medScroll);
         card.getStyleClass().add("card");
         card.setPadding(new Insets(14));
         VBox.setVgrow(medScroll, Priority.ALWAYS);
 
-        VBox content = new VBox(12, title, subtitle, searchButton, card);
+        //VBox content = new VBox(12, title, subtitle, searchButton, card);
+        VBox content = new VBox(12, subtitle, searchButton, card);
         content.setPadding(new Insets(18));
 
         return content;

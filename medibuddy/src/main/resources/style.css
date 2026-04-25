@@ -1,6 +1,6 @@
 /* Root background */
 .root {
-    -fx-background-color: #f3f4f6;
+    -fx-background-color: transparent;
     -fx-font-family: "Avenir Next";
 }
 
@@ -25,8 +25,8 @@
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;
     -fx-padding: 10px;
-    -fx-border-color: #d1d5db;
-    -fx-background-color: white;
+    -fx-border-color:  transparent;
+    -fx-background-color: #ffffff;
 }
 
 /* Button */
@@ -48,8 +48,10 @@
     -fx-background-color: white;
     -fx-background-radius: 16px;
     -fx-border-radius: 16px;
-    -fx-border-color: #e5e7eb;
+    -fx-border-color:  transparent;
     -fx-padding: 14px;
+    -fx-border-width: 1;
+    -fx-background-insets: 0;   /* REQUIRED for rounded corners */
 }
 
 /* Section title */
@@ -67,20 +69,26 @@
 
 /* Scrollable results container */
 .results-scroll {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.results-scroll > .viewport {
     -fx-background-color: white;
-    -fx-border-color: #e5e7eb;
-    -fx-border-radius: 12px;
-    -fx-background-radius: 12px;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
 }
 
 .results-container {
     -fx-padding: 4px;
     -fx-spacing: 12px;
+    -fx-background-color: rgb(233, 230, 230);
+    -fx-background-radius: 16;
+    -fx-padding: 12;
 }
-
 .info-card {
-    -fx-background-color: white;
-    -fx-border-color: #e5e7eb;
+    -fx-background-color: transparent;
+    -fx-border-color:  transparent;
     -fx-border-radius: 14px;
     -fx-background-radius: 14px;
     -fx-padding: 14px;
@@ -115,7 +123,7 @@
     -fx-font-weight: bold;
     -fx-background-radius: 12px;
     -fx-border-radius: 12px;
-    -fx-border-color: #e5e7eb;
+    -fx-border-color: transparent;
     -fx-padding: 12px;
     -fx-alignment: center-left;
 }
@@ -186,11 +194,65 @@
 }
 
 .nav-active:hover {
-    -fx-background-color: #599ca9;
+    -fx-background-color: #5fa6b4;
     -fx-border-color: transparent;
 }
 
 .nav-active:pressed {
     -fx-background-color: #5797a4;
     -fx-border-color: transparent;
+}
+
+.header-bar {
+    -fx-background-color: #f3f4f6;
+    -fx-alignment: center-left;
+}
+
+.header-title {
+    -fx-font-family: "Avenir Next";
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2937;
+}
+
+.header-subtitle {
+    -fx-font-family: "Avenir Next";
+    -fx-font-size: 12px;
+    -fx-text-fill: #6b7280;
+}
+
+.premium-button {
+    -fx-background-color: #facc15;
+    -fx-text-fill: #1f2937;
+    -fx-font-family: "Avenir Next";
+    -fx-font-weight: bold;
+    -fx-background-radius: 12px;
+    -fx-padding: 6px 14px;
+}
+
+.premium-button:hover {
+    -fx-background-color: #eab308;
+}
+
+.bottom-nav {
+    -fx-background-color: transparent;
+}
+
+.nav-icon {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-min-width: 60px;
+    -fx-min-height: 36px;
+    -fx-max-width: 60px;
+    -fx-max-height: 36px;
+    -fx-background-radius: 18;
+}
+
+.nav-icon:hover {
+    -fx-background-color: rgba(0,0,0,0.08); /* gray hover */
+    -fx-background-radius: 18;              /* same rounding as glider */
+}
+
+.nav-indicator {
+    -fx-fill: #d1d5db;
 }
