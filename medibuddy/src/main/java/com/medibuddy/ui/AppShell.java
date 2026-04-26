@@ -19,15 +19,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-<<<<<<< HEAD
+import javafx.scene.shape.Rectangle;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import com.medibuddy.App;
-=======
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
-
-
->>>>>>> 3d40dec (fixed UI, added top bar, added bottom navigation bar glider (waste of a lot of time but it works now))
 
 public class AppShell {
 
@@ -68,18 +66,18 @@ public class AppShell {
         Platform.runLater(() -> animateIndicator(medsBtn));
 
         root.sceneProperty().addListener((obs, oldScene, newScene) -> {
-    if (newScene != null) {
-        newScene.windowProperty().addListener((obs2, oldWin, newWin) -> {
-            if (newWin != null) {
-                newWin.showingProperty().addListener((obs3, wasShowing, isShowing) -> {
-                    if (isShowing) {
-                        animateIndicator(medsBtn);
+            if (newScene != null) {
+                newScene.windowProperty().addListener((obs2, oldWin, newWin) -> {
+                    if (newWin != null) {
+                        newWin.showingProperty().addListener((obs3, wasShowing, isShowing) -> {
+                            if (isShowing) {
+                                animateIndicator(medsBtn);
+                            }
+                        });
                     }
                 });
             }
         });
-    }
-});
     }
 
     private ImageView createIcon(String path) {
@@ -109,9 +107,7 @@ public class AppShell {
         app.showLoginPage();
     }
 
-   // public void showSchedulePage() {
-        //contentArea.getChildren().setAll(new SchedulePage(store).getView());
-        public void showSchedulePage() {
+    public void showSchedulePage() {
         SchedulePage page = new SchedulePage(store);  // new page
         //page.refresh();                               // 
         contentArea.getChildren().setAll(page.getView());
@@ -128,119 +124,115 @@ public class AppShell {
     }
 
     private HBox createHeader() {
-    HBox header = new HBox();
-    header.getStyleClass().add("header-bar");
-    header.setPadding(new Insets(8,20 ,8,20));
-    header.setSpacing(12);
+        HBox header = new HBox();
+        header.getStyleClass().add("header-bar");
+        header.setPadding(new Insets(8,20 ,8,20));
+        header.setSpacing(12);
 
-    // Logo
-    ImageView logo = new ImageView(
-        new Image(getClass().getResourceAsStream("/icons/logo.png"))
-    );
-    logo.setFitWidth(60);
-    logo.setFitHeight(60);
-    logo.setPreserveRatio(true);
+        // Logo
+        ImageView logo = new ImageView(
+            new Image(getClass().getResourceAsStream("/icons/logo.png"))
+        );
+        logo.setFitWidth(60);
+        logo.setFitHeight(60);
+        logo.setPreserveRatio(true);
 
-    // App name + version
-    VBox titleBox = new VBox(-2);
-    titleBox.setPadding(new Insets(-4, 0, 0, 0));
-    Label appName = new Label("MediBuddy");
-    appName.getStyleClass().add("header-title");
+        // App name + version
+        VBox titleBox = new VBox(-2);
+        titleBox.setPadding(new Insets(-4, 0, 0, 0));
+        Label appName = new Label("MediBuddy");
+        appName.getStyleClass().add("header-title");
 
-    Label version = new Label("Free version");
-    version.getStyleClass().add("header-subtitle");
+        Label version = new Label("Free version");
+        version.getStyleClass().add("header-subtitle");
 
-    titleBox.getChildren().addAll(appName, version);
+        titleBox.getChildren().addAll(appName, version);
 
-    // Spacer
-    Region spacer = new Region();
-    HBox.setHgrow(spacer, Priority.ALWAYS);
+        // Spacer
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
 
-    // Premium button
-    Button premiumBtn = new Button("Premium");
-    premiumBtn.getStyleClass().add("premium-button");
+        // Premium button
+        Button premiumBtn = new Button("Premium");
+        premiumBtn.getStyleClass().add("premium-button");
 
-    header.getChildren().addAll(logo, titleBox, spacer, premiumBtn);
+        header.getChildren().addAll(logo, titleBox, spacer, premiumBtn);
 
-    return header;
-}
+        return header;
+    }
 
     private Parent buildNavBar() {
-    navBar = new HBox(40);
-    navBar.setAlignment(Pos.CENTER);
-    navBar.getStyleClass().add("bottom-nav");
+        navBar = new HBox(40);
+        navBar.setAlignment(Pos.CENTER);
+        navBar.getStyleClass().add("bottom-nav");
 
-    todayBtn = makeNavButton("/icons/schedule.png");
-medsBtn = makeNavButton("/icons/meds.png");
-alertsBtn = makeNavButton("/icons/interactions.png");
-settingsBtn = makeNavButton("/icons/settings.png");
+        todayBtn = makeNavButton("/icons/schedule.png");
+        medsBtn = makeNavButton("/icons/meds.png");
+        alertsBtn = makeNavButton("/icons/interactions.png");
+        settingsBtn = makeNavButton("/icons/settings.png");
 
-    navBar.getChildren().addAll(medsBtn, todayBtn, alertsBtn, settingsBtn);
+        navBar.getChildren().addAll(medsBtn, todayBtn, alertsBtn, settingsBtn);
 
-    indicator = new Rectangle(60, 36);   // wider + taller
-    indicator.setArcWidth(18);
-    indicator.setArcHeight(18);
-    indicator.getStyleClass().add("nav-indicator");
-    indicator.setMouseTransparent(true); // so clicks go through
+        indicator = new Rectangle(60, 36);   // wider + taller
+        indicator.setArcWidth(18);
+        indicator.setArcHeight(18);
+        indicator.getStyleClass().add("nav-indicator");
+        indicator.setMouseTransparent(true); // so clicks go through
 
-    indicator.getStyleClass().add("nav-indicator");
+        indicator.getStyleClass().add("nav-indicator");
 
-    StackPane wrapper = new StackPane();
-    wrapper.getChildren().addAll(indicator, navBar);
-    wrapper.setPadding(new Insets(12));
+        StackPane wrapper = new StackPane();
+        wrapper.getChildren().addAll(indicator, navBar);
+        wrapper.setPadding(new Insets(12));
 
-    todayBtn.setOnAction(e -> {
-    animateIndicator(todayBtn);
-    showSchedulePage();   // or showTodayPage() if you have one
-});
+        todayBtn.setOnAction(e -> {
+            animateIndicator(todayBtn);
+            showSchedulePage();   // or showTodayPage() if you have one
+        });
 
-medsBtn.setOnAction(e -> {
-    animateIndicator(medsBtn);
-    showMedicationsPage();
-});
+        medsBtn.setOnAction(e -> {
+            animateIndicator(medsBtn);
+            showMedicationsPage();
+        });
 
-alertsBtn.setOnAction(e -> {
-    animateIndicator(alertsBtn);
-    showInteractionsPage();
-});
+        alertsBtn.setOnAction(e -> {
+            animateIndicator(alertsBtn);
+            showInteractionsPage();
+        });
 
-settingsBtn.setOnAction(e -> {
-    animateIndicator(settingsBtn);
-    showSettingsPage();
-});
+        settingsBtn.setOnAction(e -> {
+            animateIndicator(settingsBtn);
+            showSettingsPage();
+        });
+        return wrapper;
+    }
 
+    private Button makeNavButton(String iconPath) {
+        ImageView iv = new ImageView(new Image(getClass().getResourceAsStream(iconPath)));
+        iv.setFitWidth(24);
+        iv.setFitHeight(24);
 
-    return wrapper;
+        Button b = new Button();
+        b.setGraphic(iv);
+        b.getStyleClass().add("nav-icon");
+        return b;
+    }
+
+    private void animateIndicator(Button target) {
+        Bounds targetBounds = target.localToScene(target.getBoundsInLocal());
+        Bounds navBounds = navBar.localToScene(navBar.getBoundsInLocal());
+
+        if (targetBounds == null || navBounds == null) return;
+
+        double targetCenterX = targetBounds.getMinX() + targetBounds.getWidth() / 2;
+        double navCenterX = navBounds.getMinX() + navBounds.getWidth() / 2;
+
+        // Center the pill under the icon
+        double offset = targetCenterX - navCenterX;
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(300), indicator);
+        tt.setToX(offset);
+        tt.setInterpolator(Interpolator.EASE_BOTH);
+        tt.play();
+    }
 }
-
-private Button makeNavButton(String iconPath) {
-    ImageView iv = new ImageView(
-        new Image(getClass().getResourceAsStream(iconPath))
-    );
-    iv.setFitWidth(24);
-    iv.setFitHeight(24);
-
-    Button b = new Button();
-    b.setGraphic(iv);
-    b.getStyleClass().add("nav-icon");
-    return b;
-}
-
-private void animateIndicator(Button target) {
-    Bounds targetBounds = target.localToScene(target.getBoundsInLocal());
-    Bounds navBounds = navBar.localToScene(navBar.getBoundsInLocal());
-
-    if (targetBounds == null || navBounds == null) return;
-
-    double targetCenterX = targetBounds.getMinX() + targetBounds.getWidth() / 2;
-    double navCenterX = navBounds.getMinX() + navBounds.getWidth() / 2;
-
-    // Center the pill under the icon
-    double offset = targetCenterX - navCenterX;
-
-    TranslateTransition tt = new TranslateTransition(Duration.millis(300), indicator);
-    tt.setToX(offset);
-    tt.setInterpolator(Interpolator.EASE_BOTH);
-    tt.play();
-}
-} 
