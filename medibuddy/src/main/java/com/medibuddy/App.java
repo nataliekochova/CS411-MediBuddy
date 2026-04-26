@@ -8,27 +8,32 @@ import com.medibuddy.ui.CreateAccountPage;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import com.medibuddy.db.Database;
 
 public class App extends Application {
 
     private Stage primaryStage;
+    private double width = 450;
+    private double height = 800;
 
     @Override
     public void start(Stage stage) {
         this.primaryStage = stage;
 
+        Database.initialize();
+
         showLoginPage();
 
         stage.setTitle("MediBuddy");
-        stage.setMinWidth(360);
-        stage.setMinHeight(620);
+        stage.setMinWidth(width);
+        stage.setMinHeight(height);
         stage.show();
     }
 
     public void showLoginPage() {
         LoginPage loginPage = new LoginPage(this);
 
-        Scene scene = new Scene(loginPage.getView(), 390, 700);
+        Scene scene = new Scene(loginPage.getView(), width, height);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
         primaryStage.setScene(scene);
@@ -40,7 +45,7 @@ public class App extends Application {
 
         AppShell shell = new AppShell(this, client, store);
 
-        Scene scene = new Scene(shell.getView(), 390, 700);
+        Scene scene = new Scene(shell.getView(), width, height);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
         primaryStage.setScene(scene);
@@ -49,7 +54,7 @@ public class App extends Application {
     public void showCreateAccountPage() {
         CreateAccountPage page = new CreateAccountPage(this);
 
-        Scene scene = new Scene(page.getView(), 390, 700);
+        Scene scene = new Scene(page.getView(), width, height);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
         primaryStage.setScene(scene);

@@ -20,36 +20,39 @@ public class Database {
                     password_hash TEXT NOT NULL
                 );
                 """;
+
         String createMedicationsTable = """
-            CREATE TABLE IF NOT EXISTS medications (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                brand_name TEXT,
-                generic_name TEXT,
-                manufacturer TEXT,
-                purpose TEXT,
-                indications TEXT,
-                warnings TEXT,
-                label_dosage TEXT,
-                user_dose TEXT,
-                user_form TEXT,
-                FOREIGN KEY(user_id) REFERENCES users(id)
-            );
-            """;
+                CREATE TABLE IF NOT EXISTS medications (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    brand_name TEXT,
+                    generic_name TEXT,
+                    manufacturer TEXT,
+                    purpose TEXT,
+                    indications TEXT,
+                    warnings TEXT,
+                    label_dosage TEXT,
+                    user_dose TEXT,
+                    user_form TEXT,
+                    FOREIGN KEY(user_id) REFERENCES users(id)
+                );
+                """;
+
         String createSchedulesTable = """
-            CREATE TABLE IF NOT EXISTS schedules (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                medication_id INTEGER NOT NULL,
-                time TEXT,
-                frequency_per_day INTEGER,
-                frequency_type TEXT,
-                FOREIGN KEY(medication_id) REFERENCES medications(id)
-            );
-            """;
+                CREATE TABLE IF NOT EXISTS schedules (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    medication_id INTEGER NOT NULL,
+                    day TEXT,
+                    time TEXT,
+                    FOREIGN KEY(medication_id) REFERENCES medications(id)
+                );
+                """;
+
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
 
-            stmt.execute(createUsersTable);
+            stmt.execute("PRAGMA foreign_keys = ON");
+
             stmt.execute(createUsersTable);
             stmt.execute(createMedicationsTable);
             stmt.execute(createSchedulesTable);
