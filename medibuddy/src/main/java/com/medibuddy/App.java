@@ -39,11 +39,11 @@ public class App extends Application {
         primaryStage.setScene(scene);
     }
 
-    public void showMainApp(int userId) {
+    public void showMainApp(int userId, String username) {
         OpenFdaClient client = new OpenFdaClient();
         MedicationStore store = new MedicationStore(userId);
 
-        AppShell shell = new AppShell(this, client, store);
+        AppShell shell = new AppShell(this, client, store, username);
 
         Scene scene = new Scene(shell.getView(), width, height);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());

@@ -55,7 +55,7 @@ public class LoginPage {
             Integer userId = authService.login(username, password);
 
             if (userId != null) {
-                app.showMainApp(userId);
+                app.showMainApp(userId, username);
             } else {
                 message.setText("Invalid username or password.");
             }

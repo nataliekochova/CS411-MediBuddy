@@ -16,12 +16,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import com.medibuddy.App;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
@@ -32,6 +29,7 @@ public class AppShell {
     private final OpenFdaClient client;
     private final MedicationStore store;
     private final App app;
+    private final String username;
 
     private final BorderPane root;
     private final StackPane contentArea;
@@ -40,10 +38,11 @@ public class AppShell {
     private Rectangle indicator;
     private Button todayBtn, medsBtn, alertsBtn, settingsBtn;
 
-    public AppShell(App app, OpenFdaClient client, MedicationStore store) {
+    public AppShell(App app, OpenFdaClient client, MedicationStore store, String username) {
         this.app = app;
         this.client = client;
         this.store = store;
+        this.username = username;
         this.root = new BorderPane();
         this.contentArea = new StackPane();
 
@@ -121,6 +120,14 @@ public class AppShell {
 
     public void showSettingsPage() {
         contentArea.getChildren().setAll(new SettingsPage(this).getView());
+    }
+
+    public MedicationStore getStore() {
+        return store;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     private HBox createHeader() {
