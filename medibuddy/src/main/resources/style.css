@@ -51,7 +51,7 @@
     -fx-border-color:  transparent;
     -fx-padding: 14px;
     -fx-border-width: 1;
-    -fx-background-insets: 0;   /* REQUIRED for rounded corners */
+    -fx-background-insets: 0;  
 }
 
 /* Section title */
@@ -249,10 +249,67 @@
 }
 
 .nav-icon:hover {
-    -fx-background-color: rgba(0,0,0,0.08); /* gray hover */
-    -fx-background-radius: 18;              /* same rounding as glider */
+    -fx-background-color: rgba(0,0,0,0.08);
+    -fx-background-radius: 18;              
 }
 
 .nav-indicator {
     -fx-fill: #d1d5db;
 }
+
+.day-button {
+    -fx-background-color: #e0e0e0;     
+    -fx-text-fill: #333;
+    -fx-padding: 6 14;
+    -fx-background-radius: 20;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.day-button:hover {
+    -fx-background-color: #d5d5d5;
+}
+
+.day-button:selected {
+    -fx-background-color: #5fa6b4;      
+    -fx-text-fill: white;
+}
+
+.day-button:selected:hover {
+    -fx-background-color: #d1d5db;      
+}
+
+.date-picker {
+    -fx-background-color: #f2f2f2;
+    -fx-background-radius: 20;
+    -fx-padding: 6 12;
+    -fx-border-color: transparent;
+    -fx-border-radius: 20;
+    -fx-font-size: 14px;
+}
+
+/* Remove the inner borders */
+.date-picker > .text-field {
+    -fx-background-color: transparent;
+    -fx-background-radius: 20;
+    -fx-border-color: transparent;
+    -fx-padding: 6 8;
+}
+
+/* Style the calendar icon button */
+.date-picker > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 20;
+    -fx-padding: 0 6;
+}
+
+.date-picker > .arrow-button:hover {
+    -fx-background-color: #e0e0e0;
+    -fx-background-radius: 20;
+}
+
+.date-picker-popup {
+    -fx-background-radius: 12;
+}
+

@@ -9,7 +9,6 @@ import javafx.scene.Parent;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.control.DatePicker;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -110,6 +109,9 @@ public class MedicationDetailPage {
 
         endDatePicker = new DatePicker();
         endDatePicker.setPromptText("End Date");
+        
+        startDatePicker.getStyleClass().add("date-picker");
+        endDatePicker.getStyleClass().add("date-picker");
 
         if (medication.getStartDate() != null) {
             startDatePicker.setValue(medication.getStartDate());
