@@ -43,26 +43,27 @@ public class SchedulePage {
     private void updateDoseListForDate(LocalDate date, ListView<String> list) {
         list.getItems().clear();
 
+        String todayShort = date.getDayOfWeek().toString().substring(0, 3);
+
         for (SavedMedication med : store.getAllMedications()) {
             for (MedicationSchedule sched : med.getSchedules()) {
 
-                // Only daily for now — weekly/monthly later
-                if ("daily".equalsIgnoreCase(sched.getFrequencyType())) {
-                    list.getItems().add(
-                        med.getDisplayName() + " at " + sched.getTime() + " (" + sched.getFrequencyPerDay() + "x)"
-                    );
-                }
+                // Show only schedules matching today's day
+                if (sched.getDay().equalsIgnoreCase(todayShort)) {
+    list.getItems().add(
+        med.getDisplayName() + " at " + sched.getTime()
+    );
+}
             }
         }
-
-        
     }
-    public void refresh() {
-    // The ListView is the second child in root (index 1)
-    ListView<String> doseList = (ListView<String>) root.getChildren().get(1);
 
-    // Rebuild today's list
-    LocalDate today = LocalDate.now();
-    updateDoseListForDate(today, doseList);
-}
+    public void refresh() {
+        // The ListView is the second child in root (index 1)
+        ListView<String> doseList = (ListView<String>) root.getChildren().get(1);
+
+        // Rebuild today's list
+        LocalDate today = LocalDate.now();
+        updateDoseListForDate(today, doseList);
+    }
 }

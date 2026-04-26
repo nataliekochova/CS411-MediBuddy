@@ -1,18 +1,20 @@
 package com.medibuddy.model;
 
-
 public class MedicationSchedule {
-    private final String time;        // "08:00"
-    private final int frequencyPerDay;
-    private final String frequencyType; // "daily", "weekly", "monthly"
 
-    public MedicationSchedule(String time, int frequencyPerDay, String frequencyType) {
+    private final String day;   // "Mon", "Tue", ...
+    private final String time;  // "08:00 AM"
+
+    public MedicationSchedule(String day, String time) {
+        this.day = day;
         this.time = time;
-        this.frequencyPerDay = frequencyPerDay;
-        this.frequencyType = frequencyType;
     }
 
-    public String getTime() { return time; }
-    public int getFrequencyPerDay() { return frequencyPerDay; }
-    public String getFrequencyType() { return frequencyType; }
+    public String getDay() {
+        return day;
+    }
+
+    public String getTime() {
+        return time;
+    }
 }

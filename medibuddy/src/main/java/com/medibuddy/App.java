@@ -1,7 +1,6 @@
 package com.medibuddy;
 
 import com.medibuddy.client.OpenFdaClient;
-import com.medibuddy.db.Database;
 import com.medibuddy.service.MedicationStore;
 import com.medibuddy.ui.AppShell;
 import com.medibuddy.ui.LoginPage;
@@ -17,8 +16,6 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         this.primaryStage = stage;
-
-        Database.initialize();
 
         showLoginPage();
 

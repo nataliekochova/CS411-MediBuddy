@@ -35,22 +35,24 @@ public class CalendarPage {
         root.getChildren().addAll(picker, doseList);
     }
 
-    private List<String> getDosesFor(LocalDate date) {
-        List<String> result = new ArrayList<>();
+   private List<String> getDosesFor(LocalDate date) {
+    List<String> result = new ArrayList<>();
 
-        for (SavedMedication med : store.getAllMedications()) {
-            for (MedicationSchedule sched : med.getSchedules()) {
+    // Convert LocalDate → "Mon", "Tue", etc.
+    String dayShort = date.getDayOfWeek().toString().substring(0, 3);
 
-                // Generate doses based on frequency
-                for (int i = 0; i < sched.getFrequencyPerDay(); i++) {
-                    LocalTime t = LocalTime.parse(sched.getTime()); // simple version
-                    result.add(med.getName() + " at " + t.toString());
-                }
+    for (SavedMedication med : store.getAllMedications()) {
+        for (MedicationSchedule sched : med.getSchedules()) {
+
+            // Only show schedules that match the selected day
+            if (sched.getDay().equalsIgnoreCase(dayShort)) {
+                result.add(med.getDisplayName() + " at " + sched.getTime());
             }
         }
-
-        return result;
     }
+
+    return result;
+}
 
     public Parent getView() {
         return root;

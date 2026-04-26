@@ -1,9 +1,11 @@
 package com.medibuddy.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SavedMedication {
+
     private final String brandName;
     private final String genericName;
     private final String manufacturer;
@@ -13,6 +15,10 @@ public class SavedMedication {
     private final String labelDosage;
     private final String userDose;
     private final String userForm;
+
+    private LocalDate startDate;   // NEW
+    private LocalDate endDate;     // NEW
+
     private final List<MedicationSchedule> schedules = new ArrayList<>();
 
     public SavedMedication(
@@ -36,6 +42,30 @@ public class SavedMedication {
         this.userDose = userDose;
         this.userForm = userForm;
     }
+
+    // ---------------------------
+    // NEW GETTERS + SETTERS
+    // ---------------------------
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    // ---------------------------
+    // EXISTING GETTERS
+    // ---------------------------
 
     public String getBrandName() {
         return brandName;
@@ -98,6 +128,10 @@ public class SavedMedication {
         }
         return "No dose/form entered";
     }
+
+    // ---------------------------
+    // SCHEDULE MANAGEMENT
+    // ---------------------------
 
     public void addSchedule(MedicationSchedule schedule) {
         schedules.add(schedule);
