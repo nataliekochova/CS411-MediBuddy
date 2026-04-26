@@ -147,11 +147,41 @@ public class PdfExportService {
         }
 
         private void writeKeyValue(String label, String value) throws IOException {
-            writeWrappedParagraph(label + ": " + safeText(value), LABEL_FONT, BODY_FONT_SIZE, BODY_FONT, BODY_FONT_SIZE);
+            writeLabeledParagraph(label + ": ", safeText(value));
         }
 
         private void writeParagraph(String text) throws IOException {
             writeWrappedParagraph(safeText(text), BODY_FONT, BODY_FONT_SIZE, BODY_FONT, BODY_FONT_SIZE);
+        }
+
+        private void writeLabeledParagraph(String label, String value) throws IOException {
+            float labelWidth = textWidth(label, LABEL_FONT, BODY_FONT_SIZE);
+            float valueWidth = Math.max(60f, PAGE_WIDTH - labelWidth);
+            List<String> valueLines = wrapText(value, BODY_FONT, BODY_FONT_SIZE, valueWidth);
+
+            if (valueLines.isEmpty()) {
+                valueLines = List.of("N/A");
+            }
+
+            ensureSpace(valueLines.size() * LINE_HEIGHT + 4f);
+
+            stream.beginText();
+            stream.setFont(LABEL_FONT, BODY_FONT_SIZE);
+            stream.newLineAtOffset(PAGE_MARGIN, cursorY);
+            stream.showText(label);
+            stream.endText();
+
+            float valueX = PAGE_MARGIN + labelWidth;
+            for (int i = 0; i < valueLines.size(); i++) {
+                stream.beginText();
+                stream.setFont(BODY_FONT, BODY_FONT_SIZE);
+                stream.newLineAtOffset(valueX, cursorY);
+                stream.showText(valueLines.get(i));
+                stream.endText();
+                cursorY -= LINE_HEIGHT;
+            }
+
+            cursorY -= 4f;
         }
 
         private void writeWrappedParagraph(String text,
