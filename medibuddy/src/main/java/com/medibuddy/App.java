@@ -14,8 +14,8 @@ import com.medibuddy.db.Database;
 public class App extends Application {
 
     private Stage primaryStage;
-    private double width = 450;
-    private double height = 800;
+    private double width = 750;
+    private double height = 1300;
 
     @Override
     public void start(Stage stage) {
