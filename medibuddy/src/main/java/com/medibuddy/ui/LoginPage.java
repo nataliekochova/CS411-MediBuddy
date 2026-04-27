@@ -6,6 +6,10 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.geometry.Pos;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.text.Font;
 
 public class LoginPage {
 
@@ -23,61 +27,83 @@ public class LoginPage {
     }
 
     private VBox build() {
-        Label title = new Label("MediBuddy");
-        title.getStyleClass().add("title");
+        VBox layout = new VBox(20);
+    layout.setPadding(new Insets(40, 30, 40, 30));
+    layout.setAlignment(Pos.TOP_CENTER);
+    layout.getStyleClass().add("login-root");
+    
 
-        Label subtitle = new Label("Login");
-        subtitle.getStyleClass().add("subtitle");
+    // Logo image
+    ImageView logo = new ImageView(
+            new Image(getClass().getResourceAsStream("/icons/logo.png"))
+    );
+    logo.setFitWidth(250);
+    logo.setPreserveRatio(true);
 
-        TextField usernameInput = new TextField();
-        usernameInput.setPromptText("Username");
-        usernameInput.getStyleClass().add("text-field");
+    // Friendly welcome text
+    Label hello = new Label("Hello there,");
+    hello.getStyleClass().add("login-hello");
 
-        PasswordField passwordInput = new PasswordField();
-        passwordInput.setPromptText("Password");
-        passwordInput.getStyleClass().add("text-field");
+    Label welcome = new Label("Welcome to MediBuddy, your personal prescription manager.");
+    welcome.getStyleClass().add("login-welcome");
+    welcome.setWrapText(true);
 
-        Label message = new Label();
-        message.getStyleClass().add("results-text");
+    // Form fields
 
-        Button loginButton = new Button("Login");
-        loginButton.getStyleClass().add("button");
-        loginButton.setMaxWidth(Double.MAX_VALUE);
+    
+    Label usernameLabel = new Label("Username");
+usernameLabel.getStyleClass().add("login-field-label");
 
-        Button createAccountButton = new Button("Create Account");
-        createAccountButton.getStyleClass().add("button");
-        createAccountButton.setMaxWidth(Double.MAX_VALUE);
+TextField usernameInput = new TextField();
+usernameInput.getStyleClass().add("login-text-field");
 
-        loginButton.setOnAction(e -> {
-            String username = usernameInput.getText().trim();
-            String password = passwordInput.getText();
+Label passwordLabel = new Label("Password");
+passwordLabel.getStyleClass().add("login-field-label");
 
-            Integer userId = authService.login(username, password);
+PasswordField passwordInput = new PasswordField();
+passwordInput.getStyleClass().add("login-text-field");
 
-            if (userId != null) {
-                app.showMainApp(userId);
-            } else {
-                message.setText("Invalid username or password.");
-            }
-        });
+    
 
-        createAccountButton.setOnAction(e -> {
-            app.showLoginPage(); // temporary, replaced below
-            app.showCreateAccountPage();
-        });
+    Label message = new Label();
+    message.getStyleClass().add("results-text");
 
-        VBox layout = new VBox(12,
-                title,
-                subtitle,
-                usernameInput,
-                passwordInput,
-                loginButton,
-                createAccountButton,
-                message
-        );
+    // Buttons
+    Button loginButton = new Button("Login");
+    loginButton.getStyleClass().add("login-primary-button");
+    loginButton.setMaxWidth(Double.MAX_VALUE);
 
-        layout.setPadding(new Insets(18));
+    Button createAccountButton = new Button("Create Account");
+    createAccountButton.getStyleClass().add("login-secondary-button");
+    createAccountButton.setMaxWidth(Double.MAX_VALUE);
 
-        return layout;
-    }
-}
+    loginButton.setOnAction(e -> {
+        String username = usernameInput.getText().trim();
+        String password = passwordInput.getText();
+
+        Integer userId = authService.login(username, password);
+
+        if (userId != null) {
+            app.showMainApp(userId);
+        } else {
+            message.setText("Invalid username or password.");
+        }
+    });
+
+    createAccountButton.setOnAction(e -> app.showCreateAccountPage());
+
+    layout.getChildren().addAll(
+            logo,
+            hello,
+            welcome,
+            usernameLabel,
+            usernameInput,
+            passwordLabel,
+            passwordInput,
+            loginButton,
+            createAccountButton,
+            message
+    );
+
+    return layout;
+}}
