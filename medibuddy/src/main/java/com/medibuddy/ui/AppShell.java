@@ -46,6 +46,7 @@ public class AppShell {
         this.root = new BorderPane();
         this.contentArea = new StackPane();
 
+
         build();
     }
 

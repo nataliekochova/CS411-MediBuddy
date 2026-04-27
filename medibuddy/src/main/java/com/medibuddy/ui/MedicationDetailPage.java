@@ -206,7 +206,7 @@ public class MedicationDetailPage {
         detailsScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         detailsScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         detailsScroll.setPrefHeight(420);
-        detailsScroll.getStyleClass().add("results-scroll");
+        //detailsScroll.getStyleClass().add("results-scroll");
 
         VBox detailsCard = new VBox(10, detailsScroll);
         detailsCard.setPadding(new Insets(14));

@@ -137,7 +137,7 @@ public class SearchPage {
         resultsScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         resultsScroll.setPrefHeight(220);
         resultsScroll.setMinHeight(150);
-        resultsScroll.getStyleClass().add("results-scroll");
+       // resultsScroll.getStyleClass().add("results-scroll");
 
         VBox resultsCard = new VBox(10, resultsTitle, resultsScroll);
         resultsCard.setPadding(new Insets(14));

@@ -247,7 +247,7 @@ public class InteractionsPage {
 
     private VBox makeCard(String text) {
         VBox card = new VBox(6);
-        card.getStyleClass().add("card");
+       // card.getStyleClass().add("card");
 
         Label body = new Label(text);
         body.getStyleClass().add("card-body");

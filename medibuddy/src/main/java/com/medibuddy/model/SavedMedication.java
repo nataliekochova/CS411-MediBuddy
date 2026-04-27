@@ -16,8 +16,8 @@ public class SavedMedication {
     private final String userDose;
     private final String userForm;
 
-    private LocalDate startDate;   // NEW
-    private LocalDate endDate;     // NEW
+    private LocalDate startDate;   
+    private LocalDate endDate;     
 
     private final List<MedicationSchedule> schedules = new ArrayList<>();
 
