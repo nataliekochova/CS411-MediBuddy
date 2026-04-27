@@ -12,6 +12,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -126,10 +127,12 @@ public class SchedulePage {
     // DAY STRIP
     // -----------------------------
     private void rebuildDayStrip() {
-        dayStrip.getChildren().clear();
+       
+        ToggleGroup dayGroup = new ToggleGroup();
+         dayStrip.getChildren().clear();
 
-        LocalDate start = centerDate.minusDays(3);
-        for (int i = 0; i < 7; i++) {
+        LocalDate start = centerDate.minusDays(2);
+        for (int i = 0; i < 5; i++) {
             LocalDate date = start.plusDays(i);
             String dayShort = date.getDayOfWeek().toString().substring(0, 3);
             String labelText = dayShort + "\n" + date.getDayOfMonth();
@@ -142,6 +145,7 @@ public class SchedulePage {
             btn.setAlignment(Pos.CENTER);
             btn.setAlignment(Pos.CENTER);
             btn.getStyleClass().add("day-button");
+            btn.setToggleGroup(dayGroup);
 
             if (date.equals(selectedDate)) {
                 btn.setSelected(true);
@@ -149,11 +153,11 @@ public class SchedulePage {
 
             btn.setOnAction(e -> {
                 selectedDate = date;
-                dayStrip.getChildren().forEach(n -> {
-                    if (n instanceof ToggleButton tb && tb != btn) {
-                        tb.setSelected(false);
-                    }
-                });
+               // dayStrip.getChildren().forEach(n -> {
+                //    if (n instanceof ToggleButton tb && tb != btn) {
+                //        tb.setSelected(false);
+                //    }
+                //});
                 refreshDoseListForDate(selectedDate);
             });
 
@@ -161,7 +165,7 @@ public class SchedulePage {
             VBox dayContainer = new VBox(2);
 dayContainer.setAlignment(Pos.CENTER);
 
-Label triangle = new Label("▲");
+Label triangle = new Label("▼");
 triangle.getStyleClass().add("day-triangle");
 triangle.setVisible(date.equals(LocalDate.now()));
 
@@ -286,8 +290,12 @@ dayStrip.getChildren().add(dayContainer);
             HBox statusRow = new HBox(8);
             statusRow.setAlignment(Pos.CENTER_LEFT);
 
-            ToggleButton takenBtn = new ToggleButton("Taken");
-            ToggleButton missedBtn = new ToggleButton("Missed");
+            ToggleButton takenBtn = new ToggleButton("✓");
+            takenBtn.setPrefWidth(32);
+            takenBtn.setPrefHeight(32);
+            ToggleButton missedBtn = new ToggleButton("✘");
+            missedBtn.setPrefWidth(32);
+            missedBtn.setPrefHeight(32);
 
             takenBtn.getStyleClass().addAll("dose-status-button", "dose-taken");
             missedBtn.getStyleClass().addAll("dose-status-button", "dose-missed");
@@ -313,23 +321,22 @@ dayStrip.getChildren().add(dayContainer);
 
             statusRow.getChildren().addAll(takenBtn, missedBtn);
 
-            VBox box = new VBox(4, title, subtitle, statusRow);
-            box.setPadding(new Insets(10));
-            box.getStyleClass().add("dose-card");
+            VBox textBox = new VBox(2, title, subtitle);
 
+            HBox contentRow = new HBox(10);
+            contentRow.setAlignment(Pos.CENTER_LEFT);
+            contentRow.getChildren().addAll(textBox, statusRow);
+            HBox.setHgrow(textBox, Priority.ALWAYS);
+
+VBox box = new VBox(contentRow);
+box.getStyleClass().add("dose-card");
             updateRowBackground(status);
 
             setGraphic(box);
         }
 
         private void updateRowBackground(Boolean status) {
-            if (status == null) {
-                setStyle("");
-            } else if (status) {
-                setStyle("-fx-background-color: #dcfce7;");
-            } else {
-                setStyle("-fx-background-color: #fee2e2;");
-            }
-        }
+    setStyle("");  
+}
     }
 }

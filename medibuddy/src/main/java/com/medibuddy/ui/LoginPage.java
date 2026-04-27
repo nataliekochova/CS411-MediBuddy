@@ -3,8 +3,11 @@ package com.medibuddy.ui;
 import com.medibuddy.App;
 import com.medibuddy.service.AuthService;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 public class LoginPage {
@@ -23,31 +26,55 @@ public class LoginPage {
     }
 
     private VBox build() {
-        Label title = new Label("MediBuddy");
-        title.getStyleClass().add("title");
 
-        Label subtitle = new Label("Login");
-        subtitle.getStyleClass().add("subtitle");
+        VBox layout = new VBox(20);
+        layout.setPadding(new Insets(40, 30, 40, 30));
+        layout.setAlignment(Pos.TOP_CENTER);
+        layout.getStyleClass().add("login-root");
+
+        // Logo
+        ImageView logo = new ImageView(
+                new Image(getClass().getResourceAsStream("/icons/logo.png"))
+        );
+        logo.setFitWidth(250);
+        logo.setPreserveRatio(true);
+
+        // Welcome text
+        Label hello = new Label("Hello there,");
+        hello.getStyleClass().add("login-hello");
+
+        Label welcome = new Label("Welcome to MediBuddy, your personal prescription manager.");
+        welcome.getStyleClass().add("login-welcome");
+        welcome.setWrapText(true);
+
+        // Username
+        Label usernameLabel = new Label("Username");
+        usernameLabel.getStyleClass().add("login-field-label");
 
         TextField usernameInput = new TextField();
-        usernameInput.setPromptText("Username");
-        usernameInput.getStyleClass().add("text-field");
+        usernameInput.getStyleClass().add("login-text-field");
+
+        // Password
+        Label passwordLabel = new Label("Password");
+        passwordLabel.getStyleClass().add("login-field-label");
 
         PasswordField passwordInput = new PasswordField();
-        passwordInput.setPromptText("Password");
-        passwordInput.getStyleClass().add("text-field");
+        passwordInput.getStyleClass().add("login-text-field");
 
+        // Message label
         Label message = new Label();
         message.getStyleClass().add("results-text");
 
+        // Buttons
         Button loginButton = new Button("Login");
-        loginButton.getStyleClass().add("button");
+        loginButton.getStyleClass().add("login-primary-button");
         loginButton.setMaxWidth(Double.MAX_VALUE);
 
         Button createAccountButton = new Button("Create Account");
-        createAccountButton.getStyleClass().add("button");
+        createAccountButton.getStyleClass().add("login-secondary-button");
         createAccountButton.setMaxWidth(Double.MAX_VALUE);
 
+        // Login logic
         loginButton.setOnAction(e -> {
             String username = usernameInput.getText().trim();
             String password = passwordInput.getText();
@@ -61,22 +88,22 @@ public class LoginPage {
             }
         });
 
-        createAccountButton.setOnAction(e -> {
-            app.showLoginPage(); // temporary, replaced below
-            app.showCreateAccountPage();
-        });
+        // Navigation
+        createAccountButton.setOnAction(e -> app.showCreateAccountPage());
 
-        VBox layout = new VBox(12,
-                title,
-                subtitle,
+        // Add everything to layout
+        layout.getChildren().addAll(
+                logo,
+                hello,
+                welcome,
+                usernameLabel,
                 usernameInput,
+                passwordLabel,
                 passwordInput,
                 loginButton,
                 createAccountButton,
                 message
         );
-
-        layout.setPadding(new Insets(18));
 
         return layout;
     }

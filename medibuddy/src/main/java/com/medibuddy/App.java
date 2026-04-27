@@ -7,6 +7,7 @@ import com.medibuddy.ui.LoginPage;
 import com.medibuddy.ui.CreateAccountPage;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import com.medibuddy.db.Database;
 
@@ -21,6 +22,7 @@ public class App extends Application {
         this.primaryStage = stage;
 
         Database.initialize();
+        
 
         showLoginPage();
 
