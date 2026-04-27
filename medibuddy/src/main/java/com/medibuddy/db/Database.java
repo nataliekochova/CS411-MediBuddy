@@ -59,16 +59,52 @@ public class Database {
                 FOREIGN KEY(user_id) REFERENCES users(id)
             );
             """;
+        String createEmergencyContactsTable = """
+            CREATE TABLE IF NOT EXISTS emergency_contacts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            );
+            """;   
+            
+        String createCriticalAlertLogsTable = """
+        CREATE TABLE IF NOT EXISTS critical_alert_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            schedule_id INTEGER NOT NULL,
+            alert_date TEXT NOT NULL,
+            sent_at TEXT NOT NULL,
+            UNIQUE(user_id, schedule_id, alert_date),
+            FOREIGN KEY(user_id) REFERENCES users(id),
+            FOREIGN KEY(schedule_id) REFERENCES schedules(id)
+        );
+        """;
 
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
 
             stmt.execute("PRAGMA foreign_keys = ON");
+            
 
             stmt.execute(createUsersTable);
             stmt.execute(createMedicationsTable);
             stmt.execute(createSchedulesTable);
             stmt.execute(createAdherenceTable);
+            stmt.execute(createEmergencyContactsTable);
+            stmt.execute(createCriticalAlertLogsTable);
+            try {
+                stmt.execute("ALTER TABLE schedules ADD COLUMN critical_alert_enabled INTEGER DEFAULT 0");
+            } catch (SQLException ignored) {}
+
+            try {
+                stmt.execute("ALTER TABLE schedules ADD COLUMN emergency_contact_id INTEGER");
+            } catch (SQLException ignored) {}
+
+            try {
+                stmt.execute("ALTER TABLE schedules ADD COLUMN missed_window_minutes INTEGER DEFAULT 30");
+            } catch (SQLException ignored) {}
         } catch (SQLException e) {
             e.printStackTrace();
         }

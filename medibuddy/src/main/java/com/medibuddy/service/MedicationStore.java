@@ -3,6 +3,7 @@ package com.medibuddy.service;
 import com.medibuddy.db.Database;
 import com.medibuddy.model.MedicationSchedule;
 import com.medibuddy.model.SavedMedication;
+import com.medibuddy.model.EmergencyContact;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -82,15 +83,21 @@ public class MedicationStore {
         String sql = "SELECT * FROM schedules WHERE medication_id = ?";
 
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, medId);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                int contactId = rs.getInt("emergency_contact_id");
+                Integer emergencyContactId = rs.wasNull() ? null : contactId;
+
                 MedicationSchedule schedule = new MedicationSchedule(
                         rs.getString("day"),
-                        rs.getString("time")
+                        rs.getString("time"),
+                        rs.getInt("critical_alert_enabled") == 1,
+                        emergencyContactId,
+                        rs.getInt("missed_window_minutes") == 0 ? 30 : rs.getInt("missed_window_minutes")
                 );
 
                 med.addSchedule(schedule);
@@ -182,16 +189,32 @@ public class MedicationStore {
         if (medId == null) return;
 
         String sql = """
-                INSERT INTO schedules (medication_id, day, time)
-                VALUES (?, ?, ?)
+                INSERT INTO schedules (
+                    medication_id,
+                    day,
+                    time,
+                    critical_alert_enabled,
+                    emergency_contact_id,
+                    missed_window_minutes
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setInt(1, medId);
             stmt.setString(2, schedule.getDay());
             stmt.setString(3, schedule.getTime());
+            stmt.setInt(4, schedule.isCriticalAlertEnabled() ? 1 : 0);
+
+            if (schedule.getEmergencyContactId() == null) {
+                stmt.setNull(5, Types.INTEGER);
+            } else {
+                stmt.setInt(5, schedule.getEmergencyContactId());
+            }
+
+            stmt.setInt(6, schedule.getMissedWindowMinutes());
 
             stmt.executeUpdate();
 
@@ -304,6 +327,168 @@ public class MedicationStore {
                     stmt.executeUpdate();
                 }
             }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    // -----------------------------
+    // EMERGENCY CONTACTS
+    // -----------------------------
+
+    public void addEmergencyContact(String name, String email) {
+        String sql = """
+                INSERT INTO emergency_contacts (user_id, name, email)
+                VALUES (?, ?, ?)
+                """;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setString(2, name.trim());
+            stmt.setString(3, email.trim());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<EmergencyContact> getEmergencyContacts() {
+        List<EmergencyContact> contacts = new ArrayList<>();
+
+        String sql = """
+                SELECT id, name, email
+                FROM emergency_contacts
+                WHERE user_id = ?
+                ORDER BY name
+                """;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                contacts.add(new EmergencyContact(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("email")
+                ));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return contacts;
+    }
+
+    public EmergencyContact getEmergencyContactById(Integer contactId) {
+        if (contactId == null) return null;
+
+        String sql = """
+                SELECT id, name, email
+                FROM emergency_contacts
+                WHERE user_id = ? AND id = ?
+                """;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setInt(2, contactId);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new EmergencyContact(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("email")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public void deleteEmergencyContact(int contactId) {
+        String sql = """
+                DELETE FROM emergency_contacts
+                WHERE user_id = ? AND id = ?
+                """;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setInt(2, contactId);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // -----------------------------
+    // CRITICAL ALERT LOGS
+    // -----------------------------
+
+    public Integer getScheduleId(MedicationSchedule schedule) {
+        return scheduleIds.get(schedule);
+    }
+
+    public boolean hasCriticalAlertBeenSent(MedicationSchedule schedule, LocalDate date) {
+        Integer scheduleId = getScheduleId(schedule);
+        if (scheduleId == null) return true;
+
+        String sql = """
+                SELECT id
+                FROM critical_alert_logs
+                WHERE user_id = ? AND schedule_id = ? AND alert_date = ?
+                """;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setInt(2, scheduleId);
+            stmt.setString(3, date.toString());
+
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
+
+    public void markCriticalAlertSent(MedicationSchedule schedule, LocalDate date) {
+        Integer scheduleId = getScheduleId(schedule);
+        if (scheduleId == null) return;
+
+        String sql = """
+                INSERT OR IGNORE INTO critical_alert_logs
+                    (user_id, schedule_id, alert_date, sent_at)
+                VALUES (?, ?, ?, ?)
+                """;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setInt(2, scheduleId);
+            stmt.setString(3, date.toString());
+            stmt.setString(4, java.time.LocalDateTime.now().toString());
+
+            stmt.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();

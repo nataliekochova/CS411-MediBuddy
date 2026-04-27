@@ -2,6 +2,7 @@ package com.medibuddy.ui;
 
 import com.medibuddy.client.OpenFdaClient;
 import com.medibuddy.service.MedicationStore;
+import com.medibuddy.service.CriticalAlertMonitor;
 
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
@@ -38,6 +39,8 @@ public class AppShell {
     private Rectangle indicator;
     private Button todayBtn, medsBtn, alertsBtn, settingsBtn;
 
+    private CriticalAlertMonitor criticalAlertMonitor;
+
     public AppShell(App app, OpenFdaClient client, MedicationStore store, String username) {
         this.app = app;
         this.client = client;
@@ -48,6 +51,8 @@ public class AppShell {
 
 
         build();
+        criticalAlertMonitor = new CriticalAlertMonitor(store);
+        criticalAlertMonitor.start();
     }
 
     public Parent getView() {
@@ -104,6 +109,10 @@ public class AppShell {
     }
 
     public void logout() {
+        if (criticalAlertMonitor != null) {
+            criticalAlertMonitor.stop();
+        }
+
         app.showLoginPage();
     }
 
