@@ -697,6 +697,16 @@
     -fx-background-color: #475569;
 }
 
+.root.dark-theme .dose-taken:selected {
+    -fx-background-color: #41ab68;
+    -fx-text-fill: white;
+}
+
+.root.dark-theme .dose-missed:selected {
+    -fx-background-color: #b14646;
+    -fx-text-fill: white;
+}
+
 .root.dark-theme .streak-banner {
     -fx-background-color: #3f2d1f;
     -fx-border-color: #fb923c;

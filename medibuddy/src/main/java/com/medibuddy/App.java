@@ -2,10 +2,11 @@ package com.medibuddy;
 
 import com.medibuddy.client.OpenFdaClient;
 import com.medibuddy.service.MedicationStore;
+import com.medibuddy.service.ThemeManager;
 import com.medibuddy.ui.AppShell;
 import com.medibuddy.ui.LoginPage;
 import com.medibuddy.ui.CreateAccountPage;
-import com.medibuddy.ui.ThemeManager;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

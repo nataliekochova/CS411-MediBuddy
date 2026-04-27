@@ -1,4 +1,4 @@
-package com.medibuddy.ui;
+package com.medibuddy.service;
 
 import java.util.prefs.Preferences;
 
