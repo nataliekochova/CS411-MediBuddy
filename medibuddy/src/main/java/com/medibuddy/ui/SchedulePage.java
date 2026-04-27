@@ -381,16 +381,25 @@ dayStrip.getChildren().add(dayContainer);
             }
 
             takenBtn.setOnAction(e -> {
-                missedBtn.setSelected(false);
-                setStatusFor(row.date(), row.schedule(), true);
-                updateRowBackground(true);
+                if (takenBtn.isSelected()) {
+                    missedBtn.setSelected(false);
+                    setStatusFor(row.date(), row.schedule(), true);
+                    updateRowBackground(true);
+                } else {
+                    setStatusFor(row.date(), row.schedule(), null);
+                    updateRowBackground(null);
+                }
             });
 
             missedBtn.setOnAction(e -> {
-                takenBtn.setSelected(false);
-                setStatusFor(row.date(), row.schedule(), false);
-                updateRowBackground(false);
-                sendCriticalAlertIfNeeded(row);
+                if (missedBtn.isSelected()) {
+                    takenBtn.setSelected(false);
+                    setStatusFor(row.date(), row.schedule(), false);
+                    updateRowBackground(false);
+                } else {
+                    setStatusFor(row.date(), row.schedule(), null);
+                    updateRowBackground(null);
+                }
             });
 
             statusRow.getChildren().addAll(takenBtn, missedBtn);
