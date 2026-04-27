@@ -5,6 +5,8 @@ import com.medibuddy.model.SavedMedication;
 import com.medibuddy.service.MedicationStore;
 import com.medibuddy.model.EmergencyContact;
 import com.medibuddy.service.EmailService;
+import com.medibuddy.service.GoogleCalendarService;
+
 
 
 import javafx.geometry.Insets;
@@ -21,6 +23,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Alert;
+import javafx.concurrent.Task;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -79,6 +82,10 @@ public class SchedulePage {
         streakBanner.getChildren().addAll(fireIcon, streakTextBox);
 
         topBox.getChildren().add(streakBanner);
+        Button syncGoogleCalendarButton = new Button("Sync next 7 days to Google Calendar");
+        syncGoogleCalendarButton.setMaxWidth(Double.MAX_VALUE);
+        syncGoogleCalendarButton.setOnAction(e -> syncToGoogleCalendar(syncGoogleCalendarButton));
+        topBox.getChildren().add(syncGoogleCalendarButton);
 
         // -------------------------
         // 7-DAY MOVABLE CALENDAR STRIP
@@ -297,6 +304,8 @@ dayStrip.getChildren().add(dayContainer);
 
         EmergencyContact contact = store.getEmergencyContactById(schedule.getEmergencyContactId());
 
+    
+
         if (contact == null) {
             showAlert(Alert.AlertType.WARNING,
                     "No Emergency Contact",
@@ -325,6 +334,53 @@ dayStrip.getChildren().add(dayContainer);
                     "Could not send emergency email:\n" + ex.getMessage());
         }
     }
+
+    private void syncToGoogleCalendar(Button syncButton) {
+        syncButton.setDisable(true);
+        syncButton.setText("Syncing...");
+
+        Task<Integer> task = new Task<>() {
+            @Override
+            protected Integer call() throws Exception {
+                GoogleCalendarService calendarService = new GoogleCalendarService(store);
+                return calendarService.syncNextSevenDays();
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            syncButton.setDisable(false);
+            syncButton.setText("Sync next 7 days to Google Calendar");
+
+            int createdCount = task.getValue();
+
+            showAlert(
+                    Alert.AlertType.INFORMATION,
+                    "Google Calendar Synced",
+                    "Created " + createdCount + " medication reminder event" +
+                            (createdCount == 1 ? "" : "s") + " in Google Calendar."
+            );
+        });
+
+        task.setOnFailed(e -> {
+            syncButton.setDisable(false);
+            syncButton.setText("Sync next 7 days to Google Calendar");
+
+            Throwable ex = task.getException();
+            ex.printStackTrace();
+
+            showAlert(
+                    Alert.AlertType.ERROR,
+                    "Google Calendar Sync Failed",
+                    ex.getMessage() == null ? "Unknown error" : ex.getMessage()
+            );
+        });
+
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+
 
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
