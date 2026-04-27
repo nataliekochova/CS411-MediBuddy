@@ -3,6 +3,9 @@ package com.medibuddy.ui;
 import com.medibuddy.model.MedicationSchedule;
 import com.medibuddy.model.SavedMedication;
 import com.medibuddy.service.MedicationStore;
+import com.medibuddy.model.EmergencyContact;
+import com.medibuddy.service.EmailService;
+
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,6 +20,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.Alert;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -283,6 +287,53 @@ dayStrip.getChildren().add(dayContainer);
         return streak;
     }
 
+    private void sendCriticalAlertIfNeeded(DoseRow row) {
+        MedicationSchedule schedule = row.schedule();
+
+        if (!schedule.isCriticalAlertEnabled()) {
+            return;
+        }
+
+        EmergencyContact contact = store.getEmergencyContactById(schedule.getEmergencyContactId());
+
+        if (contact == null) {
+            showAlert(Alert.AlertType.WARNING,
+                    "No Emergency Contact",
+                    "This medication has Critical Alert enabled, but no contact was found.");
+            return;
+        }
+
+        try {
+            EmailService emailService = new EmailService();
+
+            emailService.sendCriticalAlert(
+                    contact.getEmail(),
+                    row.medication().getDisplayName(),
+                    schedule.getTime()
+            );
+
+            showAlert(Alert.AlertType.INFORMATION,
+                    "Critical Alert Sent",
+                    "Emergency email sent to " + contact.getName() + " at " + contact.getEmail());
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+            showAlert(Alert.AlertType.ERROR,
+                    "Critical Alert Failed",
+                    "Could not send emergency email:\n" + ex.getMessage());
+        }
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+
     // -----------------------------
     // DOSE ROW MODEL
     // -----------------------------
@@ -339,6 +390,7 @@ dayStrip.getChildren().add(dayContainer);
                 takenBtn.setSelected(false);
                 setStatusFor(row.date(), row.schedule(), false);
                 updateRowBackground(false);
+                sendCriticalAlertIfNeeded(row);
             });
 
             statusRow.getChildren().addAll(takenBtn, missedBtn);

@@ -3,6 +3,7 @@ package com.medibuddy.ui;
 import com.medibuddy.model.MedicationSchedule;
 import com.medibuddy.model.SavedMedication;
 import com.medibuddy.service.MedicationStore;
+import com.medibuddy.model.EmergencyContact;
 
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
@@ -22,10 +23,14 @@ public class MedicationDetailPage {
     private final MedicationStore store;
     private final VBox root;
 
+
     private VBox timesContainer;
     private HBox daySelector;
     private DatePicker startDatePicker;
     private DatePicker endDatePicker;
+    private CheckBox criticalAlertCheckBox;
+    private ComboBox<EmergencyContact> emergencyContactComboBox;
+    private TextField missedWindowField;
 
     private MedicationSchedule scheduleBeingEdited = null;
 
@@ -120,6 +125,53 @@ public class MedicationDetailPage {
             endDatePicker.setValue(medication.getEndDate());
         }
 
+        criticalAlertCheckBox = new CheckBox("Enable Critical Alert");
+
+        Label emergencyContactLabel = new Label("Emergency Contact:");
+
+        emergencyContactComboBox = new ComboBox<>();
+        emergencyContactComboBox.setPromptText("Select emergency contact");
+        emergencyContactComboBox.setMaxWidth(Double.MAX_VALUE);
+        emergencyContactComboBox.getItems().setAll(store.getEmergencyContacts());
+        emergencyContactComboBox.setOnShowing(e ->
+                emergencyContactComboBox.getItems().setAll(store.getEmergencyContacts())
+        );
+
+        Label missedWindowLabel = new Label("Missed Window Minutes:");
+
+        missedWindowField = new TextField();
+        missedWindowField.setPromptText("Time in Minutes(Example: 30)");
+        missedWindowField.setText("30");
+        missedWindowField.setMaxWidth(Double.MAX_VALUE);
+
+        // Hide these by default
+        emergencyContactLabel.setVisible(false);
+        emergencyContactLabel.setManaged(false);
+
+        emergencyContactComboBox.setVisible(false);
+        emergencyContactComboBox.setManaged(false);
+
+        missedWindowLabel.setVisible(false);
+        missedWindowLabel.setManaged(false);
+
+        missedWindowField.setVisible(false);
+        missedWindowField.setManaged(false);
+
+        // Show only when Critical Alert is selected
+        criticalAlertCheckBox.selectedProperty().addListener((obs, oldVal, selected) -> {
+            emergencyContactLabel.setVisible(selected);
+            emergencyContactLabel.setManaged(selected);
+
+            emergencyContactComboBox.setVisible(selected);
+            emergencyContactComboBox.setManaged(selected);
+
+            missedWindowLabel.setVisible(selected);
+            missedWindowLabel.setManaged(selected);
+
+            missedWindowField.setVisible(selected);
+            missedWindowField.setManaged(selected);
+        });
+
         Label scheduleErrorLabel = new Label();
         scheduleErrorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11px;");
         scheduleErrorLabel.setVisible(false);
@@ -163,6 +215,37 @@ public class MedicationDetailPage {
 
             scheduleErrorLabel.setVisible(false);
 
+            boolean criticalAlertEnabled = criticalAlertCheckBox.isSelected();
+            EmergencyContact selectedContact = emergencyContactComboBox.getValue();
+
+            int missedWindowMinutes = 30;
+
+            if (criticalAlertEnabled) {
+                String missedWindowText = missedWindowField.getText() == null
+                        ? ""
+                        : missedWindowField.getText().trim();
+
+                try {
+                    missedWindowMinutes = Integer.parseInt(missedWindowText);
+                } catch (NumberFormatException ex) {
+                    scheduleErrorLabel.setText("Missed window must be a number of minutes.");
+                    scheduleErrorLabel.setVisible(true);
+                    return;
+                }
+
+                if (missedWindowMinutes <= 0) {
+                    scheduleErrorLabel.setText("Missed window must be greater than 0.");
+                    scheduleErrorLabel.setVisible(true);
+                    return;
+                }
+            }
+
+            if (criticalAlertEnabled && selectedContact == null) {
+                scheduleErrorLabel.setText("Select an emergency contact for Critical Alert.");
+                scheduleErrorLabel.setVisible(true);
+                return;
+            }
+
             // Save date range to medication
             medication.setStartDate(start);
             medication.setEndDate(end);
@@ -176,13 +259,30 @@ public class MedicationDetailPage {
             // Create new schedules
             for (String day : selectedDays) {
                 for (String time : times) {
-                    MedicationSchedule sched = new MedicationSchedule(day, time);
+
+                    Integer selectedContactId;
+
+                    if (selectedContact == null) {
+                        selectedContactId = null;
+                    } else {
+                        selectedContactId = selectedContact.getId();
+                    }
+
+                    MedicationSchedule sched = new MedicationSchedule(
+                            day,
+                            time,
+                            criticalAlertEnabled,
+                            selectedContactId,
+                            missedWindowMinutes
+                    );
+
                     store.addScheduleToMedication(medication, sched);
                 }
             }
 
             updateSchedulesList(schedulesCard);
             clearInputs();
+
         });
 
         scheduleCard.getChildren().addAll(
@@ -195,6 +295,11 @@ public class MedicationDetailPage {
                 startDatePicker,
                 new Label("End Date:"),
                 endDatePicker,
+                criticalAlertCheckBox,
+                emergencyContactLabel,
+                emergencyContactComboBox,
+                missedWindowLabel,
+                missedWindowField,
                 scheduleErrorLabel,
                 saveScheduleButton
         );
@@ -280,6 +385,11 @@ public class MedicationDetailPage {
         for (Node n : daySelector.getChildren()) {
             ((ToggleButton) n).setSelected(false);
         }
+
+        criticalAlertCheckBox.setSelected(false);
+        emergencyContactComboBox.setValue(null);
+        missedWindowField.setText("30");
+
     }
 
     // -------------------------
@@ -290,8 +400,12 @@ public class MedicationDetailPage {
 
         for (MedicationSchedule sched : medication.getSchedules()) {
 
+            String criticalText = sched.isCriticalAlertEnabled()
+                    ? " | Critical Alert: ON (" + sched.getMissedWindowMinutes() + " min)"
+                    : " | Critical Alert: OFF";
+
             Label label = new Label(
-                    sched.getDay() + " - " + sched.getTime()
+                    sched.getDay() + " - " + sched.getTime() + criticalText
             );
 
             Button editBtn = new Button("Edit");
@@ -313,6 +427,13 @@ public class MedicationDetailPage {
                 // Load dates
                 startDatePicker.setValue(medication.getStartDate());
                 endDatePicker.setValue(medication.getEndDate());
+
+                criticalAlertCheckBox.setSelected(sched.isCriticalAlertEnabled());
+
+                EmergencyContact contact = store.getEmergencyContactById(sched.getEmergencyContactId());
+                emergencyContactComboBox.setValue(contact);
+
+                missedWindowField.setText(String.valueOf(sched.getMissedWindowMinutes()));
 
                 updateSchedulesList(schedulesCard);
             });
