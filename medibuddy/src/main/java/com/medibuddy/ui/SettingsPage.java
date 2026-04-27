@@ -2,10 +2,14 @@ package com.medibuddy.ui;
 
 import com.medibuddy.service.PdfExportService;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
@@ -27,6 +31,27 @@ public class SettingsPage {
         Label body = new Label("Account settings");
         body.getStyleClass().add("results-text");
 
+        VBox appearanceCard = new VBox(8);
+        appearanceCard.getStyleClass().addAll("card", "settings-section");
+
+        Label appearanceTitle = new Label("Appearance");
+        appearanceTitle.getStyleClass().add("section-title");
+
+        Label appearanceDescription = new Label("Switch the app between light and dark mode.");
+        appearanceDescription.getStyleClass().addAll("results-text", "settings-description");
+
+        CheckBox darkModeToggle = new CheckBox("Enable dark mode");
+        darkModeToggle.setSelected(shell.isDarkModeEnabled());
+        darkModeToggle.selectedProperty().addListener((obs, wasSelected, isSelected) ->
+                shell.setDarkModeEnabled(isSelected));
+
+        HBox toggleRow = new HBox(darkModeToggle);
+        toggleRow.setAlignment(Pos.CENTER_LEFT);
+        toggleRow.getStyleClass().add("settings-toggle-row");
+        HBox.setHgrow(darkModeToggle, Priority.ALWAYS);
+
+        appearanceCard.getChildren().addAll(appearanceTitle, appearanceDescription, toggleRow);
+
         Button exportButton = new Button("Export My Data as PDF");
         exportButton.getStyleClass().add("button");
         exportButton.setMaxWidth(Double.MAX_VALUE);
@@ -37,7 +62,7 @@ public class SettingsPage {
         logoutButton.setMaxWidth(Double.MAX_VALUE);
         logoutButton.setOnAction(e -> shell.logout());
 
-        root.getChildren().addAll(title, body, exportButton, logoutButton);
+        root.getChildren().addAll(title, body, appearanceCard, exportButton, logoutButton);
     }
 
     public Parent getView() {

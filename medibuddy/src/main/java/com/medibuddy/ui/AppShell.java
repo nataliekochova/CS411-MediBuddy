@@ -131,6 +131,14 @@ public class AppShell {
         return username;
     }
 
+    public boolean isDarkModeEnabled() {
+        return app.isDarkModeEnabled();
+    }
+
+    public void setDarkModeEnabled(boolean enabled) {
+        app.setDarkModeEnabled(enabled);
+    }
+
     private HBox createHeader() {
         HBox header = new HBox();
         header.getStyleClass().add("header-bar");
@@ -190,6 +198,7 @@ public class AppShell {
         indicator.getStyleClass().add("nav-indicator");
 
         StackPane wrapper = new StackPane();
+        wrapper.getStyleClass().add("bottom-nav-shell");
         wrapper.getChildren().addAll(indicator, navBar);
         wrapper.setPadding(new Insets(12));
 

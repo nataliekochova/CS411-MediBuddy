@@ -5,9 +5,9 @@ import com.medibuddy.service.MedicationStore;
 import com.medibuddy.ui.AppShell;
 import com.medibuddy.ui.LoginPage;
 import com.medibuddy.ui.CreateAccountPage;
+import com.medibuddy.ui.ThemeManager;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import com.medibuddy.db.Database;
 
@@ -37,6 +37,7 @@ public class App extends Application {
 
         Scene scene = new Scene(loginPage.getView(), width, height);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        ThemeManager.applyTheme(scene);
 
         primaryStage.setScene(scene);
     }
@@ -49,6 +50,7 @@ public class App extends Application {
 
         Scene scene = new Scene(shell.getView(), width, height);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        ThemeManager.applyTheme(scene);
 
         primaryStage.setScene(scene);
     }
@@ -58,8 +60,18 @@ public class App extends Application {
 
         Scene scene = new Scene(page.getView(), width, height);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        ThemeManager.applyTheme(scene);
 
         primaryStage.setScene(scene);
+    }
+
+    public boolean isDarkModeEnabled() {
+        return ThemeManager.isDarkModeEnabled();
+    }
+
+    public void setDarkModeEnabled(boolean enabled) {
+        ThemeManager.setDarkModeEnabled(enabled);
+        ThemeManager.applyTheme(primaryStage.getScene());
     }
 
     public static void main(String[] args) {

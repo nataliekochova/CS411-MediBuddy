@@ -234,6 +234,10 @@
     -fx-background-color: transparent;
 }
 
+.bottom-nav-shell {
+    -fx-background-color: transparent;
+}
+
 .nav-icon {
     -fx-background-color: transparent;
     -fx-padding: 0;
@@ -557,4 +561,165 @@
 
 .scroll-pane .viewport {
     -fx-background-color: transparent;
+}
+
+.settings-section {
+    -fx-spacing: 8px;
+}
+
+.settings-description {
+    -fx-wrap-text: true;
+}
+
+.settings-toggle-row {
+    -fx-padding: 4px 0 0 0;
+}
+
+.check-box {
+    -fx-text-fill: #111827;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #5fa6b4;
+    -fx-border-color: #5fa6b4;
+}
+
+.root.dark-theme {
+    -fx-background-color: #111827;
+}
+
+.root.dark-theme .app-shell,
+.root.dark-theme .page-root,
+.root.dark-theme .app-content,
+.root.dark-theme .scroll-pane .viewport,
+.root.dark-theme .results-scroll > .viewport,
+.root.dark-theme .results-container,
+.root.dark-theme .list-view {
+    -fx-background-color: #111827;
+}
+
+.root.dark-theme .title,
+.root.dark-theme .section-title,
+.root.dark-theme .card-title,
+.root.dark-theme .med-card-title,
+.root.dark-theme .dose-title,
+.root.dark-theme .header-title,
+.root.dark-theme .login-hello,
+.root.dark-theme .results-text,
+.root.dark-theme .card-body,
+.root.dark-theme .field-value,
+.root.dark-theme .med-list-button,
+.root.dark-theme .dose-subtitle,
+.root.dark-theme .med-card-sub,
+.root.dark-theme .med-card-nextdose,
+.root.dark-theme .med-count-label,
+.root.dark-theme .check-box,
+.root.dark-theme .login-field-label,
+.root.dark-theme .login-welcome {
+    -fx-text-fill: #e5e7eb;
+}
+
+.root.dark-theme .subtitle,
+.root.dark-theme .field-label,
+.root.dark-theme .header-subtitle {
+    -fx-text-fill: #9ca3af;
+}
+
+.root.dark-theme .card,
+.root.dark-theme .med-card,
+.root.dark-theme .dose-card,
+.root.dark-theme .info-card,
+.root.dark-theme .settings-section {
+    -fx-background-color: #1f2937;
+    -fx-border-color: #334155;
+}
+
+.root.dark-theme .text-field,
+.root.dark-theme .login-text-field,
+.root.dark-theme .med-list-button,
+.root.dark-theme .date-picker {
+    -fx-background-color: #273449;
+    -fx-text-fill: #f9fafb;
+    -fx-prompt-text-fill: #94a3b8;
+}
+
+.root.dark-theme .header-bar {
+    -fx-background-color: #1f2937;
+}
+
+.root.dark-theme .bottom-nav-shell {
+    -fx-background-color: #cbd5e1;
+    -fx-background-radius: 28px 28px 0 0;
+    -fx-border-radius: 28px 28px 0 0;
+}
+
+.root.dark-theme .premium-button {
+    -fx-background-color: #fbbf24;
+    -fx-text-fill: #111827;
+}
+
+.root.dark-theme .nav-indicator {
+    -fx-fill: #94a3b8;
+}
+
+.root.dark-theme .nav-icon:hover {
+    -fx-background-color: rgba(15,23,42,0.10);
+}
+
+.root.dark-theme .day-button,
+.root.dark-theme .dose-status-button {
+    -fx-background-color: #334155;
+    -fx-text-fill: #e5e7eb;
+}
+
+.root.dark-theme .day-button:selected {
+    -fx-background-color: #67b6c7;
+    -fx-text-fill: #ffffff;
+}
+
+.root.dark-theme .day-button:selected:hover {
+    -fx-background-color: #5fa6b4;
+}
+
+.root.dark-theme .day-button:hover,
+.root.dark-theme .date-picker > .arrow-button:hover {
+    -fx-background-color: #475569;
+}
+
+.root.dark-theme .streak-banner {
+    -fx-background-color: #3f2d1f;
+    -fx-border-color: #fb923c;
+}
+
+.root.dark-theme .streak-title {
+    -fx-text-fill: #fdba74;
+}
+
+.root.dark-theme .streak-message {
+    -fx-text-fill: #fed7aa;
+}
+
+.root.dark-theme .streak-fire {
+    -fx-text-fill: #fb923c;
+}
+
+.root.dark-theme .check-box .box {
+    -fx-background-color: #273449;
+    -fx-border-color: #64748b;
+}
+
+.root.dark-theme .check-box:selected .box {
+    -fx-background-color: #5fa6b4;
+    -fx-border-color: #5fa6b4;
 }
