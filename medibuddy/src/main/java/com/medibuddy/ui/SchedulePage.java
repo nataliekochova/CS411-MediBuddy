@@ -16,11 +16,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Tooltip;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -379,6 +381,16 @@ dayStrip.getChildren().add(dayContainer);
                 takenBtn.setSelected(true);
             } else if (Boolean.FALSE.equals(status)) {
                 missedBtn.setSelected(true);
+            }
+
+            boolean isFutureDose = row.date().isAfter(LocalDate.now());
+
+            takenBtn.setDisable(isFutureDose);
+            missedBtn.setDisable(isFutureDose);
+
+            if (isFutureDose) {
+                takenBtn.setTooltip(new Tooltip("You cannot mark future medications yet."));
+                missedBtn.setTooltip(new Tooltip("You cannot mark future medications yet."));
             }
 
             takenBtn.setOnAction(e -> {
