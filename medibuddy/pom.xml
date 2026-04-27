@@ -86,9 +86,27 @@
     </dependency>
 
     <dependency>
-      <groupId>com.resend</groupId>
-      <artifactId>resend-java</artifactId>
-      <version>3.1.0</version>
+        <groupId>com.resend</groupId>
+        <artifactId>resend-java</artifactId>
+        <version>3.1.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>com.google.apis</groupId>
+        <artifactId>google-api-services-calendar</artifactId>
+        <version>v3-rev20260225-2.0.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>com.google.oauth-client</groupId>
+        <artifactId>google-oauth-client-jetty</artifactId>
+        <version>1.39.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client-gson</artifactId>
+        <version>1.47.0</version>
     </dependency>
 
   </dependencies>

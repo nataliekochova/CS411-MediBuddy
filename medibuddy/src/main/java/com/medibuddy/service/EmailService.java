@@ -1,5 +1,7 @@
 package com.medibuddy.service;
 
+import java.io.ObjectInputFilter.Config;
+
 import com.resend.Resend;
 import com.resend.services.emails.model.CreateEmailOptions;
 import com.resend.services.emails.model.CreateEmailResponse;
@@ -9,7 +11,7 @@ public class EmailService {
     private final Resend resend;
 
     public EmailService() {
-        String apiKey = System.getenv("RESEND_API_KEY");
+        String apiKey = AppConfig.getResendApiKey();
 
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException("Missing RESEND_API_KEY environment variable.");
