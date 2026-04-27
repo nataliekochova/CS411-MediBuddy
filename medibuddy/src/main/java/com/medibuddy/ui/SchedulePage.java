@@ -358,6 +358,9 @@ dayStrip.getChildren().add(dayContainer);
 
             Label title = new Label(row.medication().getDisplayName());
             title.getStyleClass().add("dose-title");
+            title.setWrapText(true);
+            title.prefWidthProperty().bind(doseListView.widthProperty().subtract(150));
+            title.setMinWidth(0);
 
             String scheduleInfo = row.schedule().getDay() + " at " + row.schedule().getTime();
             Label subtitle = new Label(scheduleInfo);
@@ -418,14 +421,20 @@ dayStrip.getChildren().add(dayContainer);
             statusRow.getChildren().addAll(takenBtn, missedBtn);
 
             VBox textBox = new VBox(2, title, subtitle);
+            textBox.setMaxWidth(Double.MAX_VALUE);
 
             HBox contentRow = new HBox(10);
             contentRow.setAlignment(Pos.CENTER_LEFT);
             contentRow.getChildren().addAll(textBox, statusRow);
-            HBox.setHgrow(textBox, Priority.ALWAYS);
 
-VBox box = new VBox(contentRow);
-box.getStyleClass().add("dose-card");
+            HBox.setHgrow(textBox, Priority.ALWAYS);
+            statusRow.setMinWidth(72);
+            statusRow.setMaxWidth(72);
+
+            VBox box = new VBox(contentRow);
+            box.getStyleClass().add("dose-card");
+            box.setMaxWidth(Double.MAX_VALUE);
+
             updateRowBackground(status);
 
             setGraphic(box);

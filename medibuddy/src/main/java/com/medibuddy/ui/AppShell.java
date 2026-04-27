@@ -169,7 +169,7 @@ public class AppShell {
         String name = candidate.med().getDisplayName();
         String time = candidate.sched().getTime();
 
-        showNotification("Reminder: Take " + name + " (" + time + ")");
+        showNotification("Reminder: (" + time + ") : Take " + name);
     }
 
     private void showNotification(String message) {
