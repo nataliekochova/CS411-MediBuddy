@@ -18,12 +18,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Alert;
 import javafx.concurrent.Task;
+import javafx.scene.control.Tooltip;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -412,6 +414,9 @@ dayStrip.getChildren().add(dayContainer);
 
             Label title = new Label(row.medication().getDisplayName());
             title.getStyleClass().add("dose-title");
+            title.setWrapText(true);
+            title.prefWidthProperty().bind(doseListView.widthProperty().subtract(150));
+            title.setMinWidth(0);
 
             String scheduleInfo = row.schedule().getDay() + " at " + row.schedule().getTime();
             Label subtitle = new Label(scheduleInfo);
@@ -437,30 +442,55 @@ dayStrip.getChildren().add(dayContainer);
                 missedBtn.setSelected(true);
             }
 
+            boolean isFutureDose = row.date().isAfter(LocalDate.now());
+
+            takenBtn.setDisable(isFutureDose);
+            missedBtn.setDisable(isFutureDose);
+
+            if (isFutureDose) {
+                takenBtn.setTooltip(new Tooltip("You cannot mark future medications yet."));
+                missedBtn.setTooltip(new Tooltip("You cannot mark future medications yet."));
+            }
+
             takenBtn.setOnAction(e -> {
-                missedBtn.setSelected(false);
-                setStatusFor(row.date(), row.schedule(), true);
-                updateRowBackground(true);
+                if (takenBtn.isSelected()) {
+                    missedBtn.setSelected(false);
+                    setStatusFor(row.date(), row.schedule(), true);
+                    updateRowBackground(true);
+                } else {
+                    setStatusFor(row.date(), row.schedule(), null);
+                    updateRowBackground(null);
+                }
             });
 
             missedBtn.setOnAction(e -> {
-                takenBtn.setSelected(false);
-                setStatusFor(row.date(), row.schedule(), false);
-                updateRowBackground(false);
-                sendCriticalAlertIfNeeded(row);
+                if (missedBtn.isSelected()) {
+                    takenBtn.setSelected(false);
+                    setStatusFor(row.date(), row.schedule(), false);
+                    updateRowBackground(false);
+                } else {
+                    setStatusFor(row.date(), row.schedule(), null);
+                    updateRowBackground(null);
+                }
             });
 
             statusRow.getChildren().addAll(takenBtn, missedBtn);
 
             VBox textBox = new VBox(2, title, subtitle);
+            textBox.setMaxWidth(Double.MAX_VALUE);
 
             HBox contentRow = new HBox(10);
             contentRow.setAlignment(Pos.CENTER_LEFT);
             contentRow.getChildren().addAll(textBox, statusRow);
-            HBox.setHgrow(textBox, Priority.ALWAYS);
 
-VBox box = new VBox(contentRow);
-box.getStyleClass().add("dose-card");
+            HBox.setHgrow(textBox, Priority.ALWAYS);
+            statusRow.setMinWidth(72);
+            statusRow.setMaxWidth(72);
+
+            VBox box = new VBox(contentRow);
+            box.getStyleClass().add("dose-card");
+            box.setMaxWidth(Double.MAX_VALUE);
+
             updateRowBackground(status);
 
             setGraphic(box);

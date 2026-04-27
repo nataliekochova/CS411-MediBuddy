@@ -407,11 +407,13 @@
     -fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: #1f2937;
+    -fx-wrap-text: true;
 }
 
 .dose-subtitle {
     -fx-font-size: 12px;
     -fx-text-fill: #6b7280;
+    -fx-wrap-text: true;
 }
 
 /* --------------------------------------------------
@@ -442,6 +444,7 @@
     -fx-background-color: transparent;
     -fx-control-inner-background: transparent;
     -fc-padding: 6 0;
+    -fx-fixed-cell-size: -1;
 }
 
 .list-cell {
@@ -595,6 +598,15 @@
     -fx-border-color: #5fa6b4;
 }
 
+.notification-banner {
+    -fx-background-color: #5fa6b4;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 16px;
+    -fx-padding: 12px 18px;
+}
+
 .root.dark-theme {
     -fx-background-color: #111827;
 }
@@ -732,6 +744,11 @@
 .root.dark-theme .check-box:selected .box {
     -fx-background-color: #5fa6b4;
     -fx-border-color: #5fa6b4;
+}
+
+.root.dark-theme .notification-banner {
+    -fx-background-color: #67b6c7;
+    -fx-text-fill: #111827;
 }
 
 .combo-box,

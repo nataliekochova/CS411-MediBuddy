@@ -83,6 +83,16 @@ public class AppShell {
                 });
             }
         });
+
+        root.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.setOnKeyPressed(e -> {
+                    if (e.getCode() == javafx.scene.input.KeyCode.N) {
+                        triggerReminder();
+                    }
+                });
+            }
+        });
     }
 
     private ImageView createIcon(String path) {
@@ -146,6 +156,43 @@ public class AppShell {
 
     public void setDarkModeEnabled(boolean enabled) {
         app.setDarkModeEnabled(enabled);
+    }
+
+    private void triggerReminder() {
+        var candidate = store.getLatestMissedDoseCandidate();
+
+        if (candidate == null) {
+            showNotification("No missed medications 👍");
+            return;
+        }
+
+        String name = candidate.med().getDisplayName();
+        String time = candidate.sched().getTime();
+
+        showNotification("Reminder: (" + time + ") : Take " + name);
+    }
+
+    private void showNotification(String message) {
+        Label banner = new Label(message);
+        banner.getStyleClass().add("notification-banner");
+
+        StackPane overlay = new StackPane(banner);
+        overlay.setMouseTransparent(true);
+        StackPane.setAlignment(banner, Pos.TOP_CENTER);
+
+        contentArea.getChildren().add(overlay);
+
+        TranslateTransition slide = new TranslateTransition(Duration.millis(250), banner);
+        slide.setFromY(-80);
+        slide.setToY(10);
+        slide.setInterpolator(Interpolator.EASE_OUT);
+        slide.play();
+
+        javafx.animation.PauseTransition pause =
+                new javafx.animation.PauseTransition(Duration.seconds(4));
+
+        pause.setOnFinished(e -> contentArea.getChildren().remove(overlay));
+        pause.play();
     }
 
     private HBox createHeader() {
