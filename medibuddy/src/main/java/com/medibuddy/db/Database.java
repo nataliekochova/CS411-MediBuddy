@@ -47,6 +47,18 @@ public class Database {
                     FOREIGN KEY(medication_id) REFERENCES medications(id)
                 );
                 """;
+        
+        String createAdherenceTable = """
+            CREATE TABLE IF NOT EXISTS adherence (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                schedule_id INTEGER NOT NULL,
+                date TEXT NOT NULL,
+                taken INTEGER,
+                FOREIGN KEY(schedule_id) REFERENCES schedules(id),
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            );
+            """;
 
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
@@ -56,7 +68,7 @@ public class Database {
             stmt.execute(createUsersTable);
             stmt.execute(createMedicationsTable);
             stmt.execute(createSchedulesTable);
-
+            stmt.execute(createAdherenceTable);
         } catch (SQLException e) {
             e.printStackTrace();
         }

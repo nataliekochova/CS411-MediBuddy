@@ -5,6 +5,7 @@ import com.medibuddy.model.MedicationSchedule;
 import com.medibuddy.model.SavedMedication;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.*;
 
 public class MedicationStore {
@@ -14,6 +15,7 @@ public class MedicationStore {
     private final List<SavedMedication> medications = new ArrayList<>();
     private final Map<SavedMedication, Integer> medicationIds = new HashMap<>();
     private final Map<MedicationSchedule, Integer> scheduleIds = new HashMap<>();
+    private final Map<String, Boolean> adherenceCache = new HashMap<>();
 
     private SavedMedication selectedMedication;
 
@@ -217,6 +219,91 @@ public class MedicationStore {
 
             stmt.setInt(1, id);
             stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String key(int scheduleId, String date) {
+        return scheduleId + "|" + date;
+    }
+
+    public Boolean getDoseStatus(LocalDate date, MedicationSchedule sched) {
+        Integer schedId = scheduleIds.get(sched);
+        if (schedId == null) return null;
+
+        String dateStr = date.toString();
+        String k = key(schedId, dateStr);
+
+        if (adherenceCache.containsKey(k)) {
+            return adherenceCache.get(k);
+        }
+
+        String sql = """
+                SELECT taken FROM adherence
+                WHERE user_id = ? AND schedule_id = ? AND date = ?
+                """;
+
+        try (Connection conn = Database.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setInt(2, schedId);
+            stmt.setString(3, dateStr);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                boolean val = rs.getInt("taken") == 1;
+                adherenceCache.put(k, val);
+                return val;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public void setDoseStatus(LocalDate date, MedicationSchedule sched, Boolean status) {
+        Integer schedId = scheduleIds.get(sched);
+        if (schedId == null) return;
+
+        String dateStr = date.toString();
+        String k = key(schedId, dateStr);
+
+        adherenceCache.put(k, status);
+
+        String deleteSql = """
+                DELETE FROM adherence
+                WHERE user_id = ? AND schedule_id = ? AND date = ?
+                """;
+
+        String insertSql = """
+                INSERT INTO adherence (user_id, schedule_id, date, taken)
+                VALUES (?, ?, ?, ?)
+                """;
+
+        try (Connection conn = Database.getConnection()) {
+
+            try (PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
+                stmt.setInt(1, userId);
+                stmt.setInt(2, schedId);
+                stmt.setString(3, dateStr);
+                stmt.executeUpdate();
+            }
+
+            if (status != null) {
+                try (PreparedStatement stmt = conn.prepareStatement(insertSql)) {
+                    stmt.setInt(1, userId);
+                    stmt.setInt(2, schedId);
+                    stmt.setString(3, dateStr);
+                    stmt.setInt(4, status ? 1 : 0);
+                    stmt.executeUpdate();
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

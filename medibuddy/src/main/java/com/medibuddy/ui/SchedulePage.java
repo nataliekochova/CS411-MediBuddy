@@ -208,20 +208,28 @@ dayStrip.getChildren().add(dayContainer);
     }
 
     private Boolean getStatusFor(LocalDate date, MedicationSchedule sched) {
-        Map<MedicationSchedule, Boolean> dayMap = adherence.get(date);
-        if (dayMap == null) return null;
-        return dayMap.get(sched);
+        return store.getDoseStatus(date, sched);
     }
 
     private void setStatusFor(LocalDate date, MedicationSchedule sched, Boolean status) {
-        Map<MedicationSchedule, Boolean> dayMap = adherence.computeIfAbsent(date, d -> new HashMap<>());
-        dayMap.put(sched, status);
+        store.setDoseStatus(date, sched, status);
         updateStreak();
     }
 
     // -----------------------------
     // STREAK LOGIC
     // -----------------------------
+
+    private boolean hasAnySchedules() {
+        for (SavedMedication med : store.getAllMedications()) {
+            if (!med.getSchedules().isEmpty()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void updateStreak() {
         int streak = computeStreak();
         streakLabel.setText("Current streak: " + streak + " day" + (streak == 1 ? "" : "s"));
@@ -236,26 +244,40 @@ dayStrip.getChildren().add(dayContainer);
     }
 
     private int computeStreak() {
+        if (!hasAnySchedules()) {
+            return 0;
+        }
+
         LocalDate today = LocalDate.now();
         int streak = 0;
 
         LocalDate cursor = today;
+        int daysChecked = 0;
+        int maxDaysToCheck = 365;
 
-        while (true) {
-            LocalDate dateForLambda = cursor;
-
+        while (daysChecked < maxDaysToCheck) {
             List<DoseRow> rows = buildDoseRowsForDate(cursor);
-            if (rows.isEmpty()) break;
 
-            boolean allTaken = rows.stream().allMatch(r -> {
-                Boolean status = getStatusFor(dateForLambda, r.schedule());
-                return Boolean.TRUE.equals(status);
-            });
+            if (rows.isEmpty()) {
+                // No meds scheduled that day, so it does not break the streak.
+                streak++;
+            } else {
+                LocalDate dateForLambda = cursor;
 
-            if (!allTaken) break;
+                boolean allTaken = rows.stream().allMatch(r -> {
+                    Boolean status = getStatusFor(dateForLambda, r.schedule());
+                    return Boolean.TRUE.equals(status);
+                });
 
-            streak++;
+                if (!allTaken) {
+                    break;
+                }
+
+                streak++;
+            }
+
             cursor = cursor.minusDays(1);
+            daysChecked++;
         }
 
         return streak;
