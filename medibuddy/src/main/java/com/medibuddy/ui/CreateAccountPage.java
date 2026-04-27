@@ -3,9 +3,13 @@ package com.medibuddy.ui;
 import com.medibuddy.App;
 import com.medibuddy.service.AuthService;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.ImageView;
 
 public class CreateAccountPage {
 
@@ -22,60 +26,106 @@ public class CreateAccountPage {
         return root;
     }
 
-    private VBox build() {
-        Label title = new Label("Create Account");
-        title.getStyleClass().add("title");
+private VBox build() {
 
-        TextField usernameInput = new TextField();
-        usernameInput.setPromptText("Username");
-        usernameInput.getStyleClass().add("text-field");
+    // Title
+    Label title = new Label("Create a new account");
+    title.getStyleClass().add("title-large");
 
-        PasswordField passwordInput = new PasswordField();
-        passwordInput.setPromptText("Password");
-        passwordInput.getStyleClass().add("text-field");
+    // Username label + field
+    Label usernameLabel = new Label("Username");
+    usernameLabel.getStyleClass().add("field-label");
 
-        Label message = new Label();
-        message.getStyleClass().add("results-text");
+    TextField usernameInput = new TextField();
+    usernameInput.getStyleClass().add("blue-input");
 
-        Button createButton = new Button("Create Account");
-        createButton.getStyleClass().add("button");
-        createButton.setMaxWidth(Double.MAX_VALUE);
+    // Password label + field
+    Label passwordLabel = new Label("Password");
+    passwordLabel.getStyleClass().add("field-label");
 
-        Button backButton = new Button("Back");
-        backButton.getStyleClass().add("button");
-        backButton.setMaxWidth(Double.MAX_VALUE);
+    PasswordField passwordInput = new PasswordField();
+    passwordInput.getStyleClass().add("blue-input");
 
-        createButton.setOnAction(e -> {
-            String username = usernameInput.getText().trim();
-            String password = passwordInput.getText();
+    // Repeat password label + field
+    Label repeatLabel = new Label("Repeat password");
+    repeatLabel.getStyleClass().add("field-label");
 
-            if (username.isEmpty() || password.isEmpty()) {
-                message.setText("Please fill in all fields.");
-                return;
-            }
+    PasswordField repeatInput = new PasswordField();
+    repeatInput.getStyleClass().add("blue-input");
 
-            boolean success = authService.createAccount(username, password);
+    // Remember me checkbox
+    CheckBox rememberMe = new CheckBox("Remember me on this device");
+    rememberMe.getStyleClass().add("remember-checkbox");
 
-            if (success) {
-                message.setText("Account created! You can now log in.");
-            } else {
-                message.setText("Username already exists.");
-            }
-        });
+    // Back button (small)
+    Button backButton = new Button("Back");
+    backButton.getStyleClass().add("secondary-small-button");
+    backButton.setMaxWidth(140);
 
-        backButton.setOnAction(e -> app.showLoginPage());
+    backButton.setOnAction(e -> app.showLoginPage());
 
-        VBox layout = new VBox(12,
-                title,
-                usernameInput,
-                passwordInput,
-                createButton,
-                backButton,
-                message
-        );
+    // Main button
+    Button createButton = new Button("Take me to the app →");
+    createButton.getStyleClass().add("primary-wide-button");
+    createButton.setMaxWidth(Double.MAX_VALUE);
 
-        layout.setPadding(new Insets(18));
+    // Message label
+    Label message = new Label();
+    message.getStyleClass().add("results-text");
 
-        return layout;
-    }
+    // Bottom logo + text
+    ImageView logoIcon = new ImageView(
+            new Image(getClass().getResourceAsStream("/icons/logo.png"))
+    );
+    logoIcon.setFitWidth(35);
+    logoIcon.setPreserveRatio(true);
+
+    Label logoText = new Label("MediBuddy");
+    logoText.getStyleClass().add("logo-text");
+
+    HBox logoRow = new HBox(8, logoIcon, logoText);
+    logoRow.setAlignment(Pos.CENTER);
+
+    // Logic
+    createButton.setOnAction(e -> {
+        String username = usernameInput.getText().trim();
+        String password = passwordInput.getText();
+        String repeat = repeatInput.getText();
+
+        if (username.isEmpty() || password.isEmpty() || repeat.isEmpty()) {
+            message.setText("Please fill in all fields.");
+            return;
+        }
+
+        if (!password.equals(repeat)) {
+            message.setText("Passwords do not match.");
+            return;
+        }
+
+        boolean success = authService.createAccount(username, password);
+
+        if (success) {
+            app.showMainApp(0, username);
+        } else {
+            message.setText("Username already exists.");
+        }
+    });
+
+    VBox layout = new VBox(14,
+            title,
+            usernameLabel, usernameInput,
+            passwordLabel, passwordInput,
+            repeatLabel, repeatInput,
+            rememberMe,
+            backButton,          // ← INSERTED HERE
+            createButton,
+            message,
+            logoRow
+    );
+
+    layout.setPadding(new Insets(24));
+    layout.setAlignment(Pos.CENTER);
+
+    return layout;
+}
 }

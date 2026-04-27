@@ -16,7 +16,7 @@ public class App extends Application {
 
     private Stage primaryStage;
     private double width = 750;
-    private double height = 1300;
+    private double height = 750;
 
     @Override
     public void start(Stage stage) {
