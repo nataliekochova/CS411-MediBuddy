@@ -495,6 +495,56 @@ public class MedicationStore {
         }
     }
 
+    // ----------------------------- Notification Setup -----------------------------
+    public record AlertCandidate(SavedMedication med, MedicationSchedule sched) {}
+
+    public AlertCandidate getLatestMissedDoseCandidate() {
+        LocalDate today = LocalDate.now();
+        String todayShort = today.getDayOfWeek().toString().substring(0, 3);
+
+        java.time.LocalTime now = java.time.LocalTime.now();
+
+        AlertCandidate latest = null;
+        int latestMinutes = -1;
+
+        for (SavedMedication med : medications) {
+            for (MedicationSchedule sched : med.getSchedules()) {
+
+                if (!sched.getDay().equalsIgnoreCase(todayShort)) continue;
+                //if (!sched.isCriticalAlertEnabled()) continue;
+
+                Boolean status = getDoseStatus(today, sched);
+                if (status != null) continue;
+
+                if (hasCriticalAlertBeenSent(sched, today)) continue;
+
+                int schedMinutes = parseTimeToMinutes(sched.getTime());
+                int alertMinutes = schedMinutes + sched.getMissedWindowMinutes();
+
+                int nowMinutes = now.getHour() * 60 + now.getMinute();
+
+                if (nowMinutes < alertMinutes) continue;
+
+                if (alertMinutes > latestMinutes) {
+                    latestMinutes = alertMinutes;
+                    latest = new AlertCandidate(med, sched);
+                }
+            }
+        }
+
+        return latest;
+    }
+
+    private int parseTimeToMinutes(String timeStr) {
+        try {
+            var formatter = java.time.format.DateTimeFormatter.ofPattern("h:mm a");
+            var t = java.time.LocalTime.parse(timeStr.trim().toUpperCase(), formatter);
+            return t.getHour() * 60 + t.getMinute();
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
     // -----------------------------
 
     public void setSelectedMedication(SavedMedication med) {

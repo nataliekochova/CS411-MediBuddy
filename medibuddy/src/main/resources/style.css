@@ -595,6 +595,15 @@
     -fx-border-color: #5fa6b4;
 }
 
+.notification-banner {
+    -fx-background-color: #5fa6b4;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 16px;
+    -fx-padding: 12px 18px;
+}
+
 .root.dark-theme {
     -fx-background-color: #111827;
 }
@@ -732,6 +741,11 @@
 .root.dark-theme .check-box:selected .box {
     -fx-background-color: #5fa6b4;
     -fx-border-color: #5fa6b4;
+}
+
+.root.dark-theme .notification-banner {
+    -fx-background-color: #67b6c7;
+    -fx-text-fill: #111827;
 }
 
 .combo-box,
