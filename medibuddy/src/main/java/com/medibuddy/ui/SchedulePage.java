@@ -35,6 +35,7 @@ public class SchedulePage {
 
     private final HBox dayStrip;
     private final ListView<DoseRow> doseListView;
+    
 
     private LocalDate centerDate = LocalDate.now();
     private LocalDate selectedDate = LocalDate.now();

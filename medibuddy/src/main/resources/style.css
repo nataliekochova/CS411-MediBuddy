@@ -784,17 +784,51 @@
     -fx-text-fill: white;
 }
 
+.list-view {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+}
+
 .list-view .list-cell {
-    -fx-background-color: white;
+    -fx-background-color: transparent;
     -fx-text-fill: #1f2937;
 }
 
-.list-view .list-cell:selected {
-    -fx-background-color: #3fa7b5;
-    -fx-text-fill: white;
+.list-view .list-cell:empty {
+    -fx-background-color: transparent;
 }
 
-.list-view .list-cell:hover {
-    -fx-background-color: #e0f2fe;
-    -fx-text-fill: #111827;
+.list-view .list-cell:empty:hover {
+    -fx-background-color: transparent;
+}
+
+.list-view .list-cell:filled:hover {
+    -fx-background-color: transparent;
+}
+
+.list-view .list-cell:filled:selected {
+    -fx-background-color: transparent;
+}
+
+.root.dark-theme .list-view {
+    -fx-background-color: #111827;
+    -fx-control-inner-background: #111827;
+}
+
+.root.dark-theme .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e5e7eb;
+}
+
+.root.dark-theme .list-view .list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+.root.dark-theme .list-view .list-cell:empty:hover {
+    -fx-background-color: transparent;
+}
+
+.root.dark-theme .list-view .list-cell:filled:hover,
+.root.dark-theme .list-view .list-cell:filled:selected {
+    -fx-background-color: transparent;
 }
