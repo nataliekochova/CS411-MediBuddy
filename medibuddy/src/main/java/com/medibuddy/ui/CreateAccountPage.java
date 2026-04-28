@@ -66,7 +66,7 @@ private VBox build() {
 
     // Main button
     Button createButton = new Button("Take me to the app →");
-    createButton.getStyleClass().add("primary-wide-button");
+    createButton.getStyleClass().add("login-secondary-button");
     createButton.setMaxWidth(Double.MAX_VALUE);
 
     // Message label
@@ -77,7 +77,7 @@ private VBox build() {
     ImageView logoIcon = new ImageView(
             new Image(getClass().getResourceAsStream("/icons/logo.png"))
     );
-    logoIcon.setFitWidth(35);
+    logoIcon.setFitWidth(50);
     logoIcon.setPreserveRatio(true);
 
     Label logoText = new Label("MediBuddy");
