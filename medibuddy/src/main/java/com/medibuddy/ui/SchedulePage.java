@@ -266,32 +266,36 @@ dayStrip.getChildren().add(dayContainer);
         int streak = 0;
 
         LocalDate cursor = today;
-        int daysChecked = 0;
-        int maxDaysToCheck = 365;
+        int calendarDaysScanned = 0;
+        int maxCalendarDaysToScan = 365;
+        int scheduledDaysChecked = 0;
+        int maxScheduledDaysToCheck = 365;
 
-        while (daysChecked < maxDaysToCheck) {
+        while (scheduledDaysChecked < maxScheduledDaysToCheck
+                && calendarDaysScanned < maxCalendarDaysToScan) {
             List<DoseRow> rows = buildDoseRowsForDate(cursor);
 
             if (rows.isEmpty()) {
-                // No meds scheduled that day, so it does not break the streak.
-                streak++;
-            } else {
-                LocalDate dateForLambda = cursor;
-
-                boolean allTaken = rows.stream().allMatch(r -> {
-                    Boolean status = getStatusFor(dateForLambda, r.schedule());
-                    return Boolean.TRUE.equals(status);
-                });
-
-                if (!allTaken) {
-                    break;
-                }
-
-                streak++;
+                cursor = cursor.minusDays(1);
+                calendarDaysScanned++;
+                continue;
             }
 
+            LocalDate dateForLambda = cursor;
+
+            boolean allTaken = rows.stream().allMatch(r -> {
+                Boolean status = getStatusFor(dateForLambda, r.schedule());
+                return Boolean.TRUE.equals(status);
+            });
+
+            if (!allTaken) {
+                break;
+            }
+
+            streak++;
+            scheduledDaysChecked++;
             cursor = cursor.minusDays(1);
-            daysChecked++;
+            calendarDaysScanned++;
         }
 
         return streak;

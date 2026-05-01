@@ -44,6 +44,8 @@ public class MedicationStore {
     private void loadMedications() {
         medications.clear();
         medicationIds.clear();
+        scheduleIds.clear();
+        adherenceCache.clear();
 
         String sql = "SELECT * FROM medications WHERE user_id = ?";
 
@@ -65,6 +67,16 @@ public class MedicationStore {
                         rs.getString("user_dose"),
                         rs.getString("user_form")
                 );
+
+                String startDate = rs.getString("start_date");
+                if (startDate != null && !startDate.isBlank()) {
+                    med.setStartDate(LocalDate.parse(startDate));
+                }
+
+                String endDate = rs.getString("end_date");
+                if (endDate != null && !endDate.isBlank()) {
+                    med.setEndDate(LocalDate.parse(endDate));
+                }
 
                 int medId = rs.getInt("id");
 
@@ -91,10 +103,16 @@ public class MedicationStore {
             while (rs.next()) {
                 int contactId = rs.getInt("emergency_contact_id");
                 Integer emergencyContactId = rs.wasNull() ? null : contactId;
+                String day = rs.getString("day");
+                String time = rs.getString("time");
+
+                if (day == null || day.isBlank() || time == null || time.isBlank()) {
+                    continue;
+                }
 
                 MedicationSchedule schedule = new MedicationSchedule(
-                        rs.getString("day"),
-                        rs.getString("time"),
+                        day,
+                        time,
                         rs.getInt("critical_alert_enabled") == 1,
                         emergencyContactId,
                         rs.getInt("missed_window_minutes") == 0 ? 30 : rs.getInt("missed_window_minutes")
@@ -120,9 +138,9 @@ public class MedicationStore {
                 INSERT INTO medications (
                     user_id, brand_name, generic_name, manufacturer,
                     purpose, indications, warnings, label_dosage,
-                    user_dose, user_form
+                    user_dose, user_form, start_date, end_date
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (Connection conn = Database.getConnection();
@@ -138,6 +156,8 @@ public class MedicationStore {
             stmt.setString(8, medication.getLabelDosage());
             stmt.setString(9, medication.getUserDose());
             stmt.setString(10, medication.getUserForm());
+            stmt.setString(11, medication.getStartDate() == null ? null : medication.getStartDate().toString());
+            stmt.setString(12, medication.getEndDate() == null ? null : medication.getEndDate().toString());
 
             stmt.executeUpdate();
 
@@ -145,6 +165,30 @@ public class MedicationStore {
             if (keys.next()) {
                 medicationIds.put(medication, keys.getInt(1));
             }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateMedicationDateRange(SavedMedication medication) {
+        Integer medId = medicationIds.get(medication);
+        if (medId == null) return;
+
+        String sql = """
+                UPDATE medications
+                SET start_date = ?, end_date = ?
+                WHERE id = ? AND user_id = ?
+                """;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, medication.getStartDate() == null ? null : medication.getStartDate().toString());
+            stmt.setString(2, medication.getEndDate() == null ? null : medication.getEndDate().toString());
+            stmt.setInt(3, medId);
+            stmt.setInt(4, userId);
+            stmt.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();

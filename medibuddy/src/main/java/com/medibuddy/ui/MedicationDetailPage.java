@@ -249,6 +249,7 @@ public class MedicationDetailPage {
             // Save date range to medication
             medication.setStartDate(start);
             medication.setEndDate(end);
+            store.updateMedicationDateRange(medication);
 
             // If editing, remove old schedule
             if (scheduleBeingEdited != null) {
