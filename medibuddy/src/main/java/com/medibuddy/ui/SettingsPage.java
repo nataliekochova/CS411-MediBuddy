@@ -16,18 +16,25 @@ import javafx.stage.FileChooser;
 import com.medibuddy.model.EmergencyContact;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ScrollPane;
 
 import java.io.File;
 import java.io.IOException;
 
 public class SettingsPage {
     private final VBox root;
+    private final ScrollPane scrollPane;
     private final PdfExportService pdfExportService = new PdfExportService();
 
     public SettingsPage(AppShell shell) {
         root = new VBox(12);
         root.setPadding(new Insets(18));
         root.getStyleClass().add("page-root");
+        scrollPane = new ScrollPane(root);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.getStyleClass().add("page-root");
 
         Label title = new Label("Settings");
         title.getStyleClass().add("title");
@@ -69,7 +76,9 @@ public class SettingsPage {
         contactEmailField.setPromptText("Contact email");
 
         ListView<EmergencyContact> contactListView = new ListView<>();
-        contactListView.setPrefHeight(140);
+        contactListView.setMinHeight(120);
+        contactListView.setPrefHeight(120);
+        contactListView.setMaxHeight(120);
         contactListView.getItems().setAll(shell.getStore().getEmergencyContacts());
 
         Button saveContactButton = new Button("Save Emergency Contact");
@@ -146,32 +155,6 @@ public class SettingsPage {
         exportButton.setMaxWidth(Double.MAX_VALUE);
         exportButton.setOnAction(e -> exportPdf(shell));
 
-
-        Button testEmailButton = new Button("Send Test Email");
-        testEmailButton.getStyleClass().add("button");
-        testEmailButton.setMaxWidth(Double.MAX_VALUE);
-
-        testEmailButton.setOnAction(e -> {
-            try {
-                EmailService emailService = new EmailService();
-                emailService.sendTestEmail("modyadnan05@gmail.com");
-
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Email Sent");
-                alert.setHeaderText(null);
-                alert.setContentText("Test email sent successfully.");
-                alert.showAndWait();
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Email Failed");
-                alert.setHeaderText(null);
-                alert.setContentText("Email failed: " + ex.getMessage());
-                alert.showAndWait();
-            }
-        });
         Button logoutButton = new Button("Log Out");
         logoutButton.getStyleClass().add("danger-button");
         logoutButton.setMaxWidth(Double.MAX_VALUE);
@@ -181,7 +164,7 @@ public class SettingsPage {
     }
 
     public Parent getView() {
-        return root;
+        return scrollPane;
     }
 
     private void exportPdf(AppShell shell) {

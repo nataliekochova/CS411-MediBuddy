@@ -14,7 +14,7 @@ public class EmailService {
         String apiKey = AppConfig.getResendApiKey();
 
         if (apiKey == null || apiKey.isBlank()) {
-            throw new IllegalStateException("Missing RESEND_API_KEY environment variable.");
+            throw new IllegalStateException("Missing RESEND_API_KEY in config.properties.");
         }
 
         this.resend = new Resend(apiKey);

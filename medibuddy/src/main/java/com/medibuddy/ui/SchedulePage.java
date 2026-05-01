@@ -303,6 +303,9 @@ dayStrip.getChildren().add(dayContainer);
 
     private void sendCriticalAlertIfNeeded(DoseRow row) {
         MedicationSchedule schedule = row.schedule();
+        if (store.hasCriticalAlertBeenSent(schedule, row.date())) {
+            return;
+        }
 
         if (!schedule.isCriticalAlertEnabled()) {
             return;
@@ -327,6 +330,8 @@ dayStrip.getChildren().add(dayContainer);
                     row.medication().getDisplayName(),
                     schedule.getTime()
             );
+
+            store.markCriticalAlertSent(schedule, row.date());
 
             showAlert(Alert.AlertType.INFORMATION,
                     "Critical Alert Sent",
@@ -472,6 +477,8 @@ dayStrip.getChildren().add(dayContainer);
                     takenBtn.setSelected(false);
                     setStatusFor(row.date(), row.schedule(), false);
                     updateRowBackground(false);
+
+                    sendCriticalAlertIfNeeded(row); 
                 } else {
                     setStatusFor(row.date(), row.schedule(), null);
                     updateRowBackground(null);
