@@ -141,7 +141,6 @@ public class MedicationDetailPage {
 
         missedWindowField = new TextField();
         missedWindowField.setPromptText("Time in Minutes(Example: 30)");
-        missedWindowField.setText("30");
         missedWindowField.setMaxWidth(Double.MAX_VALUE);
 
         // Hide these by default
@@ -218,33 +217,39 @@ public class MedicationDetailPage {
             boolean criticalAlertEnabled = criticalAlertCheckBox.isSelected();
             EmergencyContact selectedContact = emergencyContactComboBox.getValue();
 
-            int missedWindowMinutes = 30;
+            int missedWindowMinutes = 0;
 
-            if (criticalAlertEnabled) {
-                String missedWindowText = missedWindowField.getText() == null
-                        ? ""
-                        : missedWindowField.getText().trim();
+           if (criticalAlertEnabled) {
+            String missedWindowText = missedWindowField.getText() == null
+                    ? ""
+                    : missedWindowField.getText().trim();
 
-                try {
-                    missedWindowMinutes = Integer.parseInt(missedWindowText);
-                } catch (NumberFormatException ex) {
-                    scheduleErrorLabel.setText("Missed window must be a number of minutes.");
-                    scheduleErrorLabel.setVisible(true);
-                    return;
-                }
-
-                if (missedWindowMinutes <= 0) {
-                    scheduleErrorLabel.setText("Missed window must be greater than 0.");
-                    scheduleErrorLabel.setVisible(true);
-                    return;
-                }
-            }
-
-            if (criticalAlertEnabled && selectedContact == null) {
-                scheduleErrorLabel.setText("Select an emergency contact for Critical Alert.");
+            if (missedWindowText.isEmpty()) {
+                scheduleErrorLabel.setText("Please enter a missed window in minutes.");
                 scheduleErrorLabel.setVisible(true);
                 return;
             }
+
+            try {
+                missedWindowMinutes = Integer.parseInt(missedWindowText);
+            } catch (NumberFormatException ex) {
+                scheduleErrorLabel.setText("Missed window must be a number of minutes.");
+                scheduleErrorLabel.setVisible(true);
+                return;
+            }
+
+            if (missedWindowMinutes <= 0) {
+                scheduleErrorLabel.setText("Missed window must be greater than 0.");
+                scheduleErrorLabel.setVisible(true);
+                return;
+            }
+        }
+
+        if (criticalAlertEnabled && selectedContact == null) {
+            scheduleErrorLabel.setText("Select an emergency contact for Critical Alert.");
+            scheduleErrorLabel.setVisible(true);
+            return;
+        }
 
             // Save date range to medication
             medication.setStartDate(start);
@@ -389,7 +394,7 @@ public class MedicationDetailPage {
 
         criticalAlertCheckBox.setSelected(false);
         emergencyContactComboBox.setValue(null);
-        missedWindowField.setText("30");
+        missedWindowField.clear();
 
     }
 
